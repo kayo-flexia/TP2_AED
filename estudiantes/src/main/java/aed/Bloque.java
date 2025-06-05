@@ -3,12 +3,13 @@ package aed;
 import java.util.ArrayList;
 
 public class Bloque {
-    private ArrayList<Transaccion> transacciones;
+    // private ArrayList<Transaccion> transacciones;
+    private Transaccion[] transacciones;
     private Transaccion mayorTransaccion; //la idea es que la lógica esté acá así Berretacoin.txMayorValorUltimoBloque() es sólo un return
     private int montoMedio; //ídemo mayorTransaccion
 
-    public Bloque(ArrayList<Transaccion> t) {
-        this.transacciones = new ArrayList<>(t);
+    public Bloque(Transaccion[] t) {
+        this.transacciones = t;
         //this.mayorTransaccion = getMayorTx(this.transacciones);
         //this.montoMedio = getMontoMedio(this.transacciones);
 

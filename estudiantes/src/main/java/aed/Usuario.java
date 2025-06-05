@@ -13,4 +13,8 @@ public class Usuario {
         this.id = id;
         this.saldo = saldo >= 0 ? saldo : 0; 
     }
+
+    public void actualizarSaldo(int s){
+        this.saldo += s;
+    }
 }
