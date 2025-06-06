@@ -17,4 +17,8 @@ public class Usuario {
     public void actualizarSaldo(int s){
         this.saldo += s;
     }
+
+    public int id(){
+        return this.id;
+    }
 }

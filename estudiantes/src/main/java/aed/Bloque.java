@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Bloque {
     // private ArrayList<Transaccion> transacciones;
-    private Transaccion[] transacciones;
-    private Transaccion mayorTransaccion; //la idea es que la lógica esté acá así Berretacoin.txMayorValorUltimoBloque() es sólo un return
+    private Transaccion[] transacciones; //es un heap segun monto y NO segun id como dice el enunciado
+    private Usuario maximoTenedor; //la idea es que la lógica esté acá así Berretacoin.txMayorValorUltimoBloque() es sólo un return
     private int montoMedio; //ídemo mayorTransaccion
 
     public Bloque(Transaccion[] t) {
