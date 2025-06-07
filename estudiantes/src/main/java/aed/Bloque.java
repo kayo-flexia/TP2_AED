@@ -5,25 +5,18 @@ import java.util.ArrayList;
 public class Bloque {
     // private ArrayList<Transaccion> transacciones;
     private Transaccion[] transacciones; //es un heap segun monto y NO segun id como dice el enunciado
-    private Usuario maximoTenedor; //la idea es que la lógica esté acá así Berretacoin.txMayorValorUltimoBloque() es sólo un return
-    private int montoMedio; //ídemo mayorTransaccion
+    private Transaccion[] txPorId; //(como viene, hay que guardar en el constructor) como lista enlazada o doblemente enlazada o ArrayList, cualquiera es válida. y a esta hay que agregarle un handle
+
 
     public Bloque(Transaccion[] t) {
-        this.transacciones = t;
-        //this.mayorTransaccion = getMayorTx(this.transacciones);
-        //this.montoMedio = getMontoMedio(this.transacciones);
-
+        //this.transacciones = New Heap t; o algo asi
+        //this.txPorId = new EstructuraElegida t
     }
 
-    //private getMayorTx(){
-    //  const mTx = 0;
-    //  ...
-    //  this.mayorTransaccion = mTx;
-    //}
-
-    //private getMayorTx(){
-    //  const m = 0;
-    //  ...
-    //  this.montoMedio = m;
-    //}
+    public int montosTotales(){
+        //for t in this.transacciones i < transacciones.size
+            //count += t.monto
+            //return count
+        return 0;
+    }
 }
