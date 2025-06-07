@@ -15,6 +15,7 @@ public class Transaccion implements Comparable<Transaccion> {
 
     @Override
     public int compareTo(Transaccion otro) {
+        // Deberia comparar por monto e ID en caso de empate.
         throw new UnsupportedOperationException("Implementar!");
     }
 
