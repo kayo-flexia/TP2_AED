@@ -60,6 +60,7 @@ public class Berretacoin {
         //desencolar en un heap es O(log n). La raiz la guardardamos en una variable
         //hay que restar la transaccion que borramos a this.montosTotalesUltimoB
         //llamamos a actualizar monto de la transaccion, que es O(log p)
+        //llamamos a bloques.TxPorId y eliminamos la transaccion de ahí tambien, que cuesta O(log nb)
         throw new UnsupportedOperationException("Implementar!");
     }
 }
