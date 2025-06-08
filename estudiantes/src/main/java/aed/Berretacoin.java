@@ -15,6 +15,9 @@ public class Berretacoin {
             usuarios.add(new Usuario(i)); // según el apunte modulos_basicos: colaDePriodidadDesdeSecuencia cuesta O(n)
             //despues de esto, this.usuarios está ordenado según el saldo de cada usuario
         }
+
+        this.maximoTenedor = usuarios.get(0);
+        this.bloques = new ArrayList<>();
     }
 
     public void agregarBloque(Transaccion[] transacciones){
@@ -24,6 +27,8 @@ public class Berretacoin {
             actualizarMonto(transaccion); //O(log p)
             //this.maximoTenedor = this.usuarios.consultarMax() this.usuarios es HEAP, cuesta Según el apunte es O(1)
         }
+
+        this.maximoTenedor = usuarios.get(0);
         this.montosTotalesUltimoBloque = b.montosTotales(); //es O(n)
     }
 

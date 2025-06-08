@@ -23,6 +23,10 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
+    public T maximo(){
+        return this.elementos.get(0);
+    }
+
     public boolean estaVacio() {
         return elementos.isEmpty();
     }
@@ -36,7 +40,7 @@ public class Heap<T extends Comparable<T>> {
         subir(elementos.size() - 1);
     }
 
-    // Obtener índice de nodos familia dado un i
+    // Obtener índice de nodos familia dado un i (sirve para otros métodos)
     private int indicePadre(int i) {
         return (i - 1) / 2;
     }

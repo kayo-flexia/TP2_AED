@@ -23,6 +23,10 @@ public class Usuario implements Comparable<Usuario> {
         return this.id;
     }
 
+    public int saldo(){
+        return this.saldo;
+    }
+
 
     // Agregue el equals y el compareTo para el Heap
     @Override
