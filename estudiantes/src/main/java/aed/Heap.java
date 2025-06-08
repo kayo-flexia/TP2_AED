@@ -1,7 +1,8 @@
 package aed;
+
 import java.util.ArrayList;
 
-public class Heap<T> extends Comparable<T>> {
+public class Heap<T extends Comparable<T>> {
     private ArrayList<T> elementos;
 
     // Constructor
@@ -9,7 +10,8 @@ public class Heap<T> extends Comparable<T>> {
         this.elementos = new ArrayList<>();
     }
 
-    //Construir desde Array
+    //Construir desde Array 
+    //COMPLEJIDAD O(n)
     public Heap(T[] secuencia) {
         this.elementos = new ArrayList<>();
         for (T elemento : secuencia) {
@@ -76,7 +78,7 @@ public class Heap<T> extends Comparable<T>> {
     }
 
     private void subir(int i) {
-        while (i > 0 && elementos.get(i).compareTo(padre(i)) > 0) {
+        while (i > 0 && elementos.get(i).compareTo(elementos.get(indicePadre(i))) > 0) {
             intercambiar(i, indicePadre(i));
             i = indicePadre(i);
         }

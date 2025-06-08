@@ -15,12 +15,21 @@ public class Transaccion implements Comparable<Transaccion> {
 
     @Override
     public int compareTo(Transaccion otro) {
-        throw new UnsupportedOperationException("Implementar!");
+        // Primero comparamos por monto. Si son iguales, desempata por id
+        if (this.monto != otro.monto) {
+            return Integer.compare(this.monto, otro.monto); // orden natural por monto
+        } else {
+            return Integer.compare(this.id, otro.id); // desempata por id
+        }
     }
 
     @Override
     public boolean equals(Object otro){
-        throw new UnsupportedOperationException("Implementar!");
+        if (this.id == ((Transaccion) otro).id) {
+            return true; // Entiendo que basta con tener el mismo id
+        }
+
+        return false;
     }
 
     public int monto() {
