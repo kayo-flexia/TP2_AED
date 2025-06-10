@@ -5,18 +5,24 @@ import java.util.ArrayList;
 public class Berretacoin {
     private ArrayList<Bloque> bloques; //Es un array de bloque, y bloque.transaccion es un heap según el monto
     private Usuario maximoTenedor; //usuarios es un heap asi que obtener la raiz es O(1)
-    private ArrayList<Usuario> usuarios; //es un HEAP segun el saldo de c/u
+    private Heap<Usuario> usuarios; //es un HEAP segun el saldo de c/u
     //private ArrayList<Usuario> usuariosArreglo; //ordenados por arreglo SIN ser heap
     private int montosTotalesUltimoBloque;
+    private Handle<Usuario, Integer>[] handlesUsuarios;
+
     
-    public Berretacoin(int n_usuarios){
-        this.usuarios = new ArrayList<>();
-        for (int i = 0; i < n_usuarios; i++) {
-            usuarios.add(new Usuario(i)); // según el apunte modulos_basicos: colaDePriodidadDesdeSecuencia cuesta O(n)
-            //despues de esto, this.usuarios está ordenado según el saldo de cada usuario
+    @SuppressWarnings("unchecked")
+    public Berretacoin(int n_usuarios) {
+        this.usuarios = new Heap<>();
+        this.handlesUsuarios = new Handle[n_usuarios + 1];
+
+        for (int i = 0; i < n_usuarios + 1; i++) {
+            Usuario usuario = new Usuario(i);
+            Handle<Usuario, Integer> handle = usuarios.encolar(usuario);
+            handlesUsuarios[i] = handle;
         }
 
-        this.maximoTenedor = usuarios.get(0);
+        this.maximoTenedor = usuarios.maximo(); // O usuarios.maximo()
         this.bloques = new ArrayList<>();
     }
 
@@ -28,17 +34,30 @@ public class Berretacoin {
             //this.maximoTenedor = this.usuarios.consultarMax() this.usuarios es HEAP, cuesta Según el apunte es O(1)
         }
 
-        this.maximoTenedor = usuarios.get(0);
+        this.maximoTenedor = usuarios.maximo();
         this.montosTotalesUltimoBloque = b.montosTotales(); //es O(n)
     }
 
     public void actualizarMonto(Transaccion t) {
-        Usuario comprador = usuarios.get(t.id_comprador()); // O(log p)
-        Usuario vendedor = usuarios.get(t.id_vendedor()); // O(log p)
+        int idComprador = t.id_comprador();
+        int idVendedor = t.id_vendedor();
 
-        comprador.actualizarSaldo(-1*t.monto()); //O(1)
+        Handle<Usuario, Integer> handleComprador = handlesUsuarios[idComprador];
+        Handle<Usuario, Integer> handleVendedor = handlesUsuarios[idVendedor];
+
+        Usuario comprador = usuarios.obtenerElemento(handleComprador.getRef());
+        Usuario vendedor = usuarios.obtenerElemento(handleVendedor.getRef());
+
+        comprador.actualizarSaldo(-t.monto());
         vendedor.actualizarSaldo(t.monto());
+
+        usuarios.actualizar(handleComprador);
+        usuarios.actualizar(handleVendedor);
+
+        this.maximoTenedor = usuarios.maximo();
     }
+
+
 
     public Transaccion txMayorValorUltimoBloque(){
         //Devuelve la transacci´on de mayor valor del ´ultimo bloque (sin extraerla). En caso de empate, devuelve aquella de mayor id
@@ -53,7 +72,7 @@ public class Berretacoin {
 
 
     public int maximoTenedor(){
-        return this.maximoTenedor.id(); //O(1)
+        return this.maximoTenedor.id(); //O(1) ya que tengo usuarios de 0 a n, pero el usuario 0 no existe
     }
 
     public int montoMedioUltimoBloque(){

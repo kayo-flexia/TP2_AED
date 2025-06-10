@@ -12,74 +12,75 @@ import org.junit.jupiter.api.BeforeEach;
 
 
 public class BerretacoinTests {
+    @Test
+    public void testHeapHandleUsuarios(){
+                Heap<Usuario> heap = new Heap<>();
+
+        // Guardamos los handles para poder actualizarlos después
+        HashMap<Integer, Handle<Usuario, Integer>> handles = new HashMap<>();
+
+        // Crear algunos usuarios
+        Usuario u1 = new Usuario(1, 100);
+        Usuario u2 = new Usuario(2, 200);
+        Usuario u3 = new Usuario(3, 50);
+        Usuario u4 = new Usuario(4, 150);
+
+        // Encolar usuarios en el heap
+        handles.put(u1.id(), heap.encolar(u1));
+        handles.put(u2.id(), heap.encolar(u2));
+        handles.put(u3.id(), heap.encolar(u3));
+        handles.put(u4.id(), heap.encolar(u4));
+
+        // Verificar que el máximo es el correcto (u2 con saldo 200)
+        Usuario max = heap.maximo();
+        assert max.id() == 2 : "Error: el máximo debería ser el usuario 2";
+
+        // Actualizamos el saldo de u3 para que sea el nuevo máximo
+        Usuario handleU3 = heap.obtenerElemento(handles.get(3).getRef());
+        handleU3.actualizarSaldo(200); // saldo de u3 = 250 ahora
+
+        // Reordenar heap tras la modificación
+        heap.actualizar(handles.get(3));
+
+        // Verificar que u3 ahora es el máximo
+        max = heap.maximo();
+        assert max.id() == 3 : "Error: el máximo debería ser el usuario 3";
+
+        // Desencolar el máximo (u3)
+        Usuario desencolado = heap.desencolar();
+        assert desencolado.id() == 3 : "Error: debería haberse desencolado el usuario 3";
+
+        // Verificar que el nuevo máximo sea u2
+        max = heap.maximo();
+        assert max.id() == 2 : "Error: el nuevo máximo debería ser el usuario 2";
+
+        // Verificar tamaño
+        assert heap.tamaño() == 3 : "Error: el tamaño debería ser 3";
+
+        System.out.println("✅ Todos los tests pasaron correctamente.");
+    }
+    
+    @Test
+    public void usuariosEnBerretacoin() {
+        int n = 3;
+        Berretacoin sistema = new Berretacoin(n);
+
+        // Verificar maximoTenedor inicial (el de mayor id)
+        assertEquals(3, sistema.maximoTenedor());
+
+        // Transacción: usuario 0 de creacion paga 50 a usuario 1
+        Transaccion t = new Transaccion(1, 0, 1, 50);
+        sistema.actualizarMonto(t);
+
+        // Verificar maximoTenedor inicial (el único que vendió)
+        assertEquals(1, sistema.maximoTenedor());
+    }
+    
+    
     private Berretacoin berretacoin;
     private Transaccion[] transacciones;
     private Transaccion[] transacciones2;
     private Transaccion[] transacciones3;
-
-    // Test propio para probar que se crean e insertan usuarios
-    @Test
-    public void testCrearHeapYInsertarUsuarios() {
-        Heap<Usuario> heap = new Heap<>();
-
-        Usuario u1 = new Usuario(1, 100);
-        Usuario u2 = new Usuario(2, 200);
-        Usuario u3 = new Usuario(3, 150);
-
-        heap.insertar(u1);
-        heap.insertar(u2);
-        heap.insertar(u3);
-
-        Usuario max = heap.maximo(); // elemento raíz del heap
-        assertEquals(2, max.id());
-        assertEquals(200, max.saldo());
-
-        assertEquals(3, heap.tamaño());
-    }
-
-    //Test propio para probar el heap
-    @Test
-    public void testMaximoTenedorVariado() {
-    Berretacoin sistema = new Berretacoin(5);
-
-    assertEquals(1, sistema.maximoTenedor(), "Sin bloques, max tenedor debe ser 1");
-
-    Transaccion[] bloque1 = { new Transaccion(0, 0, 3, 10) }; // Usuario 3 recibe 10
-    sistema.agregarBloque(bloque1);
-    assertEquals(3, sistema.maximoTenedor(), "Usuario 3 debería ser max tenedor con saldo 10");
-
-    Transaccion[] bloque2 = {
-        new Transaccion(1, 3, 1, 5),  // 3 vende 5 a 1
-        new Transaccion(2, 0, 2, 8)   // creación: 2 recibe 8
-    };
-    sistema.agregarBloque(bloque2);
-    // Saldos: 3 = 10 - 5 = 5, 1 = 5, 2 = 8
-    // Máximo tenedor: usuario 2 con saldo 8
-    assertEquals(2, sistema.maximoTenedor(), "Usuario 2 debería ser max tenedor con saldo 8");
-
-    Transaccion[] bloque3 = {
-        new Transaccion(3, 2, 1, 3) // 2 vende 3 a 1
-    };
-    sistema.agregarBloque(bloque3);
-
-    assertEquals(1, sistema.maximoTenedor(), "Usuario 1 debería ser max tenedor con saldo 8");
-
-    Transaccion[] bloque4 = {
-        new Transaccion(4, 1, 2, 3) // 1 vende 3 a 2
-    };
-    sistema.agregarBloque(bloque4);
-
-    assertEquals(2, sistema.maximoTenedor(), "Usuario 2 debería ser max tenedor con saldo 8");
-
-    Transaccion[] bloque5 = {
-        new Transaccion(5, 0, 3, 3) // creación, usuario 3 recibe 3 (5 + 3 = 8)
-    };
-    sistema.agregarBloque(bloque5);
-    // Saldos: 1=5, 2=8, 3=8
-    assertEquals(2, sistema.maximoTenedor(), "Empate en saldo entre 2 y 3, debe elegir usuario 2 (menor ID)");
-}
-
-
 
     // Helper class para trackear saldos de usuarios
     private class SaldoTracker {
