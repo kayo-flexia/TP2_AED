@@ -1,14 +1,14 @@
 package aed;
 
 import java.util.ArrayList;
-
+//es una impementacion de maxHeap que mantiene el orden entre sus elementos para que puedas obtener el máximo (la raiz) en O(1).
 public class Heap<T extends Comparable<T>> {
-    private ArrayList<Nodo> heap; // Array2Heap
+    private ArrayList<Nodo> heap; // implementamos un árbol binario completo representado mediante un ArrayList.
     // Cada nodo tiene a lo sumo dos hijos. Se llena de izquierda a derecha.
 
     private class Nodo {
-        T valor;
-        Handle<T, Integer> handle;
+        T valor; //por ej, el usuario, una transaccion
+        Handle<T, Integer> handle; //una referencia indirecta al índice del nodo, para ubicarlo rápidamente
 
         Nodo(T valor, Handle<T, Integer> handle) {
             this.valor = valor;
@@ -16,28 +16,7 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
-    // Constructores
-    public Heap() {
-        this.heap = new ArrayList<>(); // heap vacío
-    }
-
-    // Construir desde Array, complejidad O(n) porque usamos heapify (algoritmo de
-    // Floyd)
-    public Heap(T[] secuencia) {
-        this.heap = new ArrayList<>();
-        for (int i = 0; i < secuencia.length; i++) {
-            Handle<T, Integer> handle = new Handle<>(i);
-            heap.add(new Nodo(secuencia[i], handle));
-
-        } // se copian los elementos al array elementos
-
-        for (int i = (heap.size() / 2) - 1; i >= 0; i--) { // comienza desde (n/2)-1 Porque los nodos a partir de n/2
-            // son hojas, así que no hace falta aplicar bajar sobre ellos.
-            bajar(i); // se convierte el array en heap
-        }
-    }
-
-    // Obtener índice de nodos familia dado un i (sirve para otros métodos)
+    // se navega el arbol de la siguiente manera:
     private int indicePadre(int i) {
         return (i - 1) / 2;
     }
@@ -50,7 +29,26 @@ public class Heap<T extends Comparable<T>> {
         return 2 * i + 2;
     }
 
+    // Constructores
+    public Heap() {
+        this.heap = new ArrayList<>(); // heap vacío
+    }
+
+    // Construir desde Array, complejidad O(n) porque usamos heapify (algoritmo de Floyd)
+    public Heap(T[] secuencia) {
+        this.heap = new ArrayList<>();
+        for (int i = 0; i < secuencia.length; i++) {
+            Handle<T, Integer> handle = new Handle<>(i);
+            heap.add(new Nodo(secuencia[i], handle));
+        } // se copian los elementos al array elementos. Se crea un arbol binario desordenado, asociando cada elemento con un handle
+
+        for (int i = (heap.size() / 2) - 1; i >= 0; i--) { // comienza desde (n/2)-1 Porque los nodos a partir de n/2 son hojas, así que no hace falta aplicar bajar sobre ellos.
+            bajar(i); // se convierte el array en heap
+        }
+    }
+
     public Handle<T, Integer> encolar(T elemento) {
+        //Crea un nuevo nodo con el elemento y un handle apuntando al final del array. Lo agrega al final del heap y lo hace subir segun corresponda. Devuelve el handle para que otras estructuras lo puedan usar
         Handle<T, Integer> handle = new Handle<>(heap.size());
         Nodo nodo = new Nodo(elemento, handle);
         heap.add(nodo);
@@ -62,7 +60,7 @@ public class Heap<T extends Comparable<T>> {
         if (estaVacio()) {
             throw new IllegalStateException("El heap está vacío.");
         }
-
+        //guarda el valor de la raiz. Lo intercambia por el ultimo elemento, y lo baja segun corresponda. Devuelve el valor que estaba en la raiz
         T max = heap.get(0).valor;
         int ultimo = heap.size() - 1;
         intercambiar(0, ultimo);
@@ -76,10 +74,11 @@ public class Heap<T extends Comparable<T>> {
     }
 
     private void intercambiar(int i, int j) {
-        Nodo ni = heap.get(i);
+        //intercambia dos nodos del array. Actualiza sus handles
+        Nodo ni = heap.get(i); //O(1)
         Nodo nj = heap.get(j);
 
-        heap.set(i, nj);
+        heap.set(i, nj); //O(1) porque hay que obtener y sobreescribir?
         heap.set(j, ni);
 
         ni.handle.setRef(j);
@@ -135,9 +134,9 @@ public class Heap<T extends Comparable<T>> {
     }
 
     public void actualizar(Handle<T, Integer> handle) {
+        //Cuando un elemento cambia, hay que actualizar el heap. No sabemos si el nuevo valor es mayor o menor que antes, por eso lo bajamos o lo subimos.
         int i = handle.getRef();
         bajar(i);
         subir(i);
     }
-
 }
