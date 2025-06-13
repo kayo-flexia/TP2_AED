@@ -8,7 +8,7 @@ public class Berretacoin {
     private Heap<Usuario> usuarios; //es un HEAP segun el saldo de c/u
     //private ArrayList<Usuario> usuariosArreglo; //ordenados por arreglo SIN ser heap
     private int montosTotalesUltimoBloque;
-    private Handle<Usuario, Integer>[] handlesUsuarios;
+    private Handle<Usuario>[] handlesUsuarios;
 
     private int cantidadTransaccionesUltimoBloque;
     
@@ -19,7 +19,8 @@ public class Berretacoin {
         for (int i = 0; i <= n_usuarios; i++) {
             Usuario usuario = new Usuario(i);
             if (i == 0) usuario.actualizarSaldo(-1); // excluye al usuario 0 del máximo
-            Handle<Usuario, Integer> handle = usuarios.encolar(usuario);
+            //Creo que eso no hace falta pq el maximo es el de mayo id
+            Handle<Usuario> handle = usuarios.encolar(usuario);
             handlesUsuarios[i] = handle;
         }
 
@@ -55,8 +56,8 @@ public class Berretacoin {
         int idComprador = t.id_comprador();
         int idVendedor = t.id_vendedor();
 
-        Handle<Usuario, Integer> handleComprador = handlesUsuarios[idComprador];
-        Handle<Usuario, Integer> handleVendedor = handlesUsuarios[idVendedor];
+        Handle<Usuario> handleComprador = handlesUsuarios[idComprador];
+        Handle<Usuario> handleVendedor = handlesUsuarios[idVendedor];
 
         Usuario comprador = usuarios.obtenerElemento(handleComprador.getRef());
         Usuario vendedor = usuarios.obtenerElemento(handleVendedor.getRef());
@@ -73,7 +74,7 @@ public class Berretacoin {
 
 
     public Transaccion txMayorValorUltimoBloque(){
-        //Devuelve la transacci´on de mayor valor del ´ultimo bloque (sin extraerla). En caso de empate, devuelve aquella de mayor id
+        //Devuelve la transacción de mayor valor del último bloque (sin extraerla). En caso de empate, devuelve aquella de mayor id
         //ya que this.bloques[bloques.size()] es el ultimo bloque, hago consultarMax() del ultimo bloque y es O(1)
         if (bloques.isEmpty()) {
             return null; // o lanzar una excepción si no hay bloques
@@ -120,6 +121,11 @@ public class Berretacoin {
         // 2. Restar el monto de la transacción hackeada del total del último bloque
         montosTotalesUltimoBloque -= txHackeada.monto();
 
+        // if (txHackeada.id_comprador() != 0) {
+        //     montosTotalesUltimoBloque -= txHackeada.monto();
+        // } creo que va esto
+
+
         // 3. Revertir el efecto de la transacción en los usuarios
         // Para revertir, llamamos a actualizarMonto con los valores inversos:
         // pero actualizarMonto solo suma/resta y actualiza heap usuarios,
@@ -128,8 +134,8 @@ public class Berretacoin {
         int idComprador = txHackeada.id_comprador();
         int idVendedor = txHackeada.id_vendedor();
 
-        Handle<Usuario, Integer> handleComprador = handlesUsuarios[idComprador];
-        Handle<Usuario, Integer> handleVendedor = handlesUsuarios[idVendedor];
+        Handle<Usuario> handleComprador = handlesUsuarios[idComprador];
+        Handle<Usuario> handleVendedor = handlesUsuarios[idVendedor];
 
         Usuario comprador = usuarios.obtenerElemento(handleComprador.getRef());
         Usuario vendedor = usuarios.obtenerElemento(handleVendedor.getRef());

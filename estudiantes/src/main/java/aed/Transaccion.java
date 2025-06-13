@@ -6,7 +6,7 @@ public class Transaccion implements Comparable<Transaccion> {
     private int id_vendedor;
     private int monto;
     
-    private Handle<Transaccion, Integer> handleLista;
+    private Handle<Transaccion> handleLista;
 
     public Transaccion(int id, int id_comprador, int id_vendedor, int monto) {
         this.id = id;
@@ -32,11 +32,11 @@ public class Transaccion implements Comparable<Transaccion> {
         return id_vendedor;
     }
 
-    public Handle<Transaccion, Integer> handleLista() {
+    public Handle<Transaccion> handleLista() {
         return handleLista;
     }
 
-    public void setHandleLista(Handle<Transaccion, Integer> handle) {
+    public void setHandleLista(Handle<Transaccion> handle) {
         this.handleLista = handle;
     }
 

@@ -5,8 +5,7 @@ public class Bloque {
     private Transaccion[] txPorId;           // Acceso directo por id de transacción
 
     public Bloque(Transaccion[] t) {
-        this.transacciones = new Heap<>(t);           // O(n)
-        
+        this.transacciones = new Heap<>(t);  // O(n)
         int maxId = 0;
         for (Transaccion tx : t) {
             if (tx.id() > maxId) {
@@ -15,13 +14,15 @@ public class Bloque {
         }
 
         this.txPorId = new Transaccion[maxId + 1]; // nos aseguramos de que entren todos los ids
+        //hay que verificar que tenga tx de creacion. Si no la tiene, hay que poner new Transaccion[maxId]
+        //hay que ver si los bloques empiezan desde cero, pq si no, desperdiciamos mucha memoria. Puede pasar que creemos un array de 1000 posiciones porque el bloque tenia 10 transacciones desde el id 990 hasta el 1000
 
         for (Transaccion tx : t) {
             int id = tx.id();
             txPorId[id] = tx;
 
             // Creamos y guardamos un Handle a la posición en txPorId
-            Handle<Transaccion, Integer> handle = new Handle<>(id);
+            Handle<Transaccion> handle = new Handle<>(id);
             tx.setHandleLista(handle); // suponiendo que implementás esto en la clase Transaccion
         }
     }
@@ -50,6 +51,7 @@ public class Bloque {
     int id = tx.id();
     if (id >= 0 && id < txPorId.length && txPorId[id] == tx) {
         txPorId[id] = null;  // Eliminamos la referencia para que ya no se considere
+        //falta achicar el array. Acá queda con el mismo tamaño
     }
 }
 

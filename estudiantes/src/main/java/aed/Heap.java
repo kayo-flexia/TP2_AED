@@ -1,16 +1,16 @@
 package aed;
 
 import java.util.ArrayList;
-//es una impementacion de maxHeap que mantiene el orden entre sus elementos para que puedas obtener el máximo (la raiz) en O(1).
+//maxHeap
 public class Heap<T extends Comparable<T>> {
     private ArrayList<Nodo> heap; // implementamos un árbol binario completo representado mediante un ArrayList.
     // Cada nodo tiene a lo sumo dos hijos. Se llena de izquierda a derecha.
 
     private class Nodo {
         T valor; //por ej, el usuario, una transaccion
-        Handle<T, Integer> handle; //una referencia indirecta al índice del nodo, para ubicarlo rápidamente
+        Handle<T> handle; //una referencia indirecta al índice del nodo, para ubicarlo rápidamente
 
-        Nodo(T valor, Handle<T, Integer> handle) {
+        Nodo(T valor, Handle<T> handle) {
             this.valor = valor;
             this.handle = handle;
         }
@@ -38,7 +38,7 @@ public class Heap<T extends Comparable<T>> {
     public Heap(T[] secuencia) {
         this.heap = new ArrayList<>();
         for (int i = 0; i < secuencia.length; i++) {
-            Handle<T, Integer> handle = new Handle<>(i);
+            Handle<T> handle = new Handle<>(i);
             heap.add(new Nodo(secuencia[i], handle));
         } // se copian los elementos al array elementos. Se crea un arbol binario desordenado, asociando cada elemento con un handle
 
@@ -47,9 +47,53 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
-    public Handle<T, Integer> encolar(T elemento) {
+    private void bajar(int i) {
+        int hijoIzq = indiceHijoIzq(i);
+        int hijoDer = indiceHijoDer(i);
+        int mayor = i;
+
+        // Compara el nodo con sus hijos
+        if (hijoIzq < heap.size() &&
+                heap.get(hijoIzq).valor.compareTo(heap.get(mayor).valor) > 0) {
+            mayor = hijoIzq;
+        }
+
+        if (hijoDer < heap.size() &&
+                heap.get(hijoDer).valor.compareTo(heap.get(mayor).valor) > 0) {
+            mayor = hijoDer;
+        }
+
+        // Si alguno es mayor, intercambia con el más grande y continúa bajando.
+
+        if (mayor != i) { 
+            intercambiar(i, mayor); //cambia el handle tambien
+            bajar(mayor);
+        }
+    }
+
+    private void intercambiar(int i, int j) {
+        //intercambia dos nodos del array. Actualiza sus handles
+        Nodo ni = heap.get(i); //O(1)
+        Nodo nj = heap.get(j);
+
+        heap.set(i, nj); //O(1) porque hay que obtener y sobreescribir?
+        heap.set(j, ni);
+
+        ni.handle.setRef(j);
+        nj.handle.setRef(i);
+    }
+
+    private void subir(int i) {
+        while (i > 0 && heap.get(i).valor.compareTo(heap.get(indicePadre(i)).valor) > 0) {
+            intercambiar(i, indicePadre(i));
+            i = indicePadre(i);
+        }
+        // Compara el nuevo nodo con su padre. Si es mayor, intercambia.
+    }
+
+    public Handle<T> encolar(T elemento) {
         //Crea un nuevo nodo con el elemento y un handle apuntando al final del array. Lo agrega al final del heap y lo hace subir segun corresponda. Devuelve el handle para que otras estructuras lo puedan usar
-        Handle<T, Integer> handle = new Handle<>(heap.size());
+        Handle<T> handle = new Handle<>(heap.size());
         Nodo nodo = new Nodo(elemento, handle);
         heap.add(nodo);
         subir(heap.size() - 1);
@@ -73,50 +117,6 @@ public class Heap<T extends Comparable<T>> {
 
     }
 
-    private void intercambiar(int i, int j) {
-        //intercambia dos nodos del array. Actualiza sus handles
-        Nodo ni = heap.get(i); //O(1)
-        Nodo nj = heap.get(j);
-
-        heap.set(i, nj); //O(1) porque hay que obtener y sobreescribir?
-        heap.set(j, ni);
-
-        ni.handle.setRef(j);
-        nj.handle.setRef(i);
-    }
-
-    private void bajar(int i) {
-        int hijoIzq = indiceHijoIzq(i);
-        int hijoDer = indiceHijoDer(i);
-        int mayor = i;
-
-        // Compara el nodo con sus hijos
-        if (hijoIzq < heap.size() &&
-                heap.get(hijoIzq).valor.compareTo(heap.get(mayor).valor) > 0) {
-            mayor = hijoIzq;
-        }
-
-        if (hijoDer < heap.size() &&
-                heap.get(hijoDer).valor.compareTo(heap.get(mayor).valor) > 0) {
-            mayor = hijoDer;
-        }
-
-        // Si alguno es mayor, intercambia con el más grande y continúa bajando.
-
-        if (mayor != i) {
-            intercambiar(i, mayor);
-            bajar(mayor);
-        }
-    }
-
-    private void subir(int i) {
-        while (i > 0 && heap.get(i).valor.compareTo(heap.get(indicePadre(i)).valor) > 0) {
-            intercambiar(i, indicePadre(i));
-            i = indicePadre(i);
-        }
-        // Compara el nuevo nodo con su padre. Si es mayor, intercambia.
-    }
-
     public T maximo() {
         return this.heap.get(0).valor;
     }
@@ -133,7 +133,7 @@ public class Heap<T extends Comparable<T>> {
         return heap.get(i).valor;
     }
 
-    public void actualizar(Handle<T, Integer> handle) {
+    public void actualizar(Handle<T> handle) {
         //Cuando un elemento cambia, hay que actualizar el heap. No sabemos si el nuevo valor es mayor o menor que antes, por eso lo bajamos o lo subimos.
         int i = handle.getRef();
         bajar(i);
