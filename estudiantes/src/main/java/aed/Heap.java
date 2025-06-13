@@ -46,6 +46,21 @@ public class Heap<T extends Comparable<T>> {
             bajar(i); // se convierte el array en heap
         }
     }
+    
+    //construir desde array y devolver los handles
+    public Heap(T[] secuencia, Handle<T>[] handlesExternos) {
+        this.heap = new ArrayList<>(); //O(n)
+        for (int i = 0; i < secuencia.length; i++) {
+            Handle<T> handle = new Handle<>(i); //O(1)
+            heap.add(new Nodo(secuencia[i], handle)); //O(1)
+            handlesExternos[i] = handle; //O(1)
+        }
+
+        for (int i = (heap.size() / 2) - 1; i >= 0; i--) {
+            bajar(i); // recordar que actualiza el handle. O(1)?
+        } //O(n)
+        //O(2n) = O(n)
+    }
 
     private void bajar(int i) {
         int hijoIzq = indiceHijoIzq(i);

@@ -13,19 +13,18 @@ public class Berretacoin {
     private int cantidadTransaccionesUltimoBloque;
     
     public Berretacoin(int n_usuarios) {
-        this.usuarios = new Heap<>();
-        this.handlesUsuarios = new Handle[n_usuarios + 1];
+        this.handlesUsuarios = new Handle[n_usuarios + 1]; // O(p)
+        Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1]; //O(p)
 
         for (int i = 0; i <= n_usuarios; i++) {
-            Usuario usuario = new Usuario(i);
-            if (i == 0) usuario.actualizarSaldo(-1); // excluye al usuario 0 del máximo
-            //Creo que eso no hace falta pq el maximo es el de mayo id
-            Handle<Usuario> handle = usuarios.encolar(usuario);
-            handlesUsuarios[i] = handle;
-        }
+            arregloUsuarios[i] = new Usuario(i); //O(1)
+            if (i == 0) arregloUsuarios[i].actualizarSaldo(-1); // Para excluirlo del máximo, O(1)
+        } //O(p)
 
-        this.maximoTenedor = usuarios.maximo(); // O usuarios.maximo()
-        this.bloques = new ArrayList<>();
+        this.usuarios = new Heap<>(arregloUsuarios, handlesUsuarios); // O(p)
+        this.maximoTenedor = usuarios.maximo(); // O(1)
+        this.bloques = new ArrayList<>(); //O(1)
+        //O(3p + 4) = O(p)
     }
 
     public void agregarBloque(Transaccion[] transacciones){
