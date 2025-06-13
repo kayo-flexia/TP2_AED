@@ -1,27 +1,56 @@
 package aed;
 
-import java.util.ArrayList;
-
 public class Bloque {
-    private Heap<Transaccion> transacciones; //es un heap segun monto y NO segun id como dice el enunciado
-    private Transaccion[] txPorId; //(como viene, hay que guardar en el constructor) como lista enlazada o doblemente enlazada o ArrayList, cualquiera es válida. y a esta hay que agregarle un handle
-
-
-    // Tiene que ser complejidad O(Nb * Log P)
-    // Nb es el número de transacciones y P es el número de usuarios
-    // Acá entiendo que necesitaríamos el Handle para poder cumplir la complejidad
+    private Heap<Transaccion> transacciones; // Heap de transacciones por monto
+    private Transaccion[] txPorId;           // Acceso directo por id de transacción
 
     public Bloque(Transaccion[] t) {
-        this.transacciones = new Heap<>(t);       // COMPLEJIDAD O(n)
-        this.txPorId = new Transaccion[t.length]; // Arreglo para acceder por id
+        this.transacciones = new Heap<>(t);           // O(n)
+        
+        int maxId = 0;
+        for (Transaccion tx : t) {
+            if (tx.id() > maxId) {
+                maxId = tx.id(); // buscamos el id más alto para dimensionar el array
+            }
+        }
 
-        // Quedaría guardar las transacciones en el arreglo
+        this.txPorId = new Transaccion[maxId + 1]; // nos aseguramos de que entren todos los ids
+
+        for (Transaccion tx : t) {
+            int id = tx.id();
+            txPorId[id] = tx;
+
+            // Creamos y guardamos un Handle a la posición en txPorId
+            Handle<Transaccion, Integer> handle = new Handle<>(id);
+            tx.setHandleLista(handle); // suponiendo que implementás esto en la clase Transaccion
+        }
     }
 
-    public int montosTotales(){
-        //for t in this.transacciones i < transacciones.size
-            //count += t.monto
-            //return count
-        return 0;
+    public int montosTotales() {
+        int suma = 0;
+        for (int i = 0; i < txPorId.length; i++) {
+            if (txPorId[i] != null) {
+                suma += txPorId[i].monto();
+            }
+        }
+        return suma;
     }
+
+    public Heap<Transaccion> heap() {
+        return transacciones;
+    }
+
+    public Transaccion[] transaccionesPorId() {
+        return txPorId;
+    }
+
+
+    // método para eliminar la ultima transaccion
+    public void eliminarTransaccionPorId(Transaccion tx) {
+    int id = tx.id();
+    if (id >= 0 && id < txPorId.length && txPorId[id] == tx) {
+        txPorId[id] = null;  // Eliminamos la referencia para que ya no se considere
+    }
+}
+
 }

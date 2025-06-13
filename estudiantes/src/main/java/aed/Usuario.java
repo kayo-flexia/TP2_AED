@@ -41,12 +41,11 @@ public class Usuario implements Comparable<Usuario> {
 
     @Override
     public int compareTo(Usuario otro) {
-        // Primero comparamos por saldo. Si son iguales, desempata por id
         if (this.saldo != otro.saldo) {
-            return Integer.compare(this.saldo, otro.saldo); // orden natural por saldo
+            return Integer.compare(this.saldo, otro.saldo); // mayor saldo primero
         } else {
-            return Integer.compare(this.id, otro.id); // desempata por id
+            return Integer.compare(otro.id, this.id);
         }
     }
-    
+
 }
