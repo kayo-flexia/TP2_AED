@@ -1,58 +1,61 @@
 package aed;
 
+import aed.estructuras.heap.Heap;
+import aed.estructuras.listaEnlazada.ListaEnlazada;
+
+import java.util.ArrayList;
+
 public class Bloque {
-    private Heap<Transaccion> transacciones; // Heap de transacciones por monto
-    private Transaccion[] txPorId;           // Acceso directo por id de transacción
+    private Heap<Transaccion> transaccionesPorMonto; // Heap de transacciones por monto
+    private ListaEnlazada<Transaccion> transaccionesEnOrden; // ListaEnlazada en lugar de array para mantener el orden de inserción/otros órdenes
+    // CAMBIO: Usamos un HashMap para mapear IDs a sus Handles de la ListaEnlazada
+    private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles; // Nombre más simple
 
-    public Bloque(Transaccion[] t) {
-        this.transacciones = new Heap<>(t);  // O(n)
-        int maxId = 0;
+    public Bloque(Transaccion[] t) { //O(nb)
+        this.transaccionesPorMonto = new Heap<>(t);  //O(n)
+        this.transaccionesEnOrden = new ListaEnlazada<>(); // O(1)
+        this.transaccionHandles = new ArrayList<>(t.length); //O(n)
+        for (int i = 0; i < t.length; i++) {
+            this.transaccionHandles.add(null); // Rellenar con nulls para usar set()
+        } //O(n)
+
+        // Iterar sobre las transacciones para agregarlas a la ListaEnlazada y guardar sus handles
         for (Transaccion tx : t) {
-            if (tx.id() > maxId) {
-                maxId = tx.id(); // buscamos el id más alto para dimensionar el array
-            }
-        }
+            ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx); //O(1)
+            tx.setHandleEnLista(listaHandle); //O(1)
 
-        this.txPorId = new Transaccion[maxId + 1]; // nos aseguramos de que entren todos los ids
-        //hay que verificar que tenga tx de creacion. Si no la tiene, hay que poner new Transaccion[maxId]
-        //hay que ver si los bloques empiezan desde cero, pq si no, desperdiciamos mucha memoria. Puede pasar que creemos un array de 1000 posiciones porque el bloque tenia 10 transacciones desde el id 990 hasta el 1000
-
-        for (Transaccion tx : t) {
-            int id = tx.id();
-            txPorId[id] = tx;
-
-            // Creamos y guardamos un Handle a la posición en txPorId
-            Handle<Transaccion> handle = new Handle<>(id);
-            tx.setHandleLista(handle); // suponiendo que implementás esto en la clase Transaccion
-        }
-    }
-
-    public int montosTotales() {
-        int suma = 0;
-        for (int i = 0; i < txPorId.length; i++) {
-            if (txPorId[i] != null) {
-                suma += txPorId[i].monto();
-            }
-        }
-        return suma;
+            // Usar el ID como índice en el ArrayList
+            this.transaccionHandles.set(tx.id(), listaHandle); // O(1)
+        } //O(nb)
     }
 
     public Heap<Transaccion> heap() {
-        return transacciones;
+        return transaccionesPorMonto;
     }
 
-    public Transaccion[] transaccionesPorId() {
-        return txPorId;
+    public Transaccion[] getTransaccionesArray() { // O(nb)
+        Transaccion[] array = (Transaccion[]) new Transaccion[transaccionesEnOrden.longitud()];
+        for (int i = 0; i < transaccionesEnOrden.longitud(); i++) {
+            array[i] = transaccionesEnOrden.obtener(i);
+        }
+        return array;
     }
 
+    public void eliminarTransaccionPorId(int id) { // O(1)
+        ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id); //O(1)
 
-    // método para eliminar la ultima transaccion
-    public void eliminarTransaccionPorId(Transaccion tx) {
-    int id = tx.id();
-    if (id >= 0 && id < txPorId.length && txPorId[id] == tx) {
-        txPorId[id] = null;  // Eliminamos la referencia para que ya no se considere
-        //falta achicar el array. Acá queda con el mismo tamaño
+
+        if (handle != null && handle.estaActivo()) { // Verificar si el handle existe y es válido
+            transaccionesEnOrden.eliminar(handle); // Eliminar de la ListaEnlazada usando el handle (O(1))
+            handle.invalidar(); // Marcar el handle como inactivo
+        }
     }
-}
 
+    public Transaccion obtenerTransaccionPorId(int id) {
+        ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id);
+        if (handle != null && handle.estaActivo()) {
+            return handle.getValor();
+        }
+        return null;
+    }
 }

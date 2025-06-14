@@ -29,14 +29,19 @@ public class Usuario implements Comparable<Usuario> {
 
 
     // Agregue el equals y el compareTo para el Heap
-    @Override
+     @Override
     public boolean equals(Object otro){
-        if (this.id == ((Usuario) otro).id) {
-            return true; 
-        }
-        else{
-            return false;
-        }
+        if (this == otro) return true; // Misma referencia, son iguales
+        if (otro == null || getClass() != otro.getClass()) return false; // Null o de diferente clase
+
+        Usuario that = (Usuario) otro; // Casteo seguro
+        return this.id == that.id; // Comparación por ID
+    }
+
+    @Override
+    public int hashCode() {
+        // Es crucial sobrescribir hashCode si sobrescribes equals
+        return Integer.hashCode(id);
     }
 
     @Override

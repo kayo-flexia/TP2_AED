@@ -1,15 +1,16 @@
-package aed;
+package aed.estructuras.heap;
 //Un Handle encapsula una referencia directa al nodo del heap que contiene el dato. Es como tener un puntero controlado
 
 
 // Clase reutilizable
-public class Handle<T> {
+//este es un handle de heap. Hay que crear OTRO handle de Listas enlazadas
+public class HandleHeap<T> {
     //T es el tipo de objeto al que eventualmente se refiere (por ejemplo, un `Usuario` o `Transaccion`).  
 
     private Integer refInterna; //es la clave interna que el sistema (por ejemplo, el Heap) usa para encontrar el objeto real.
     private boolean activo; //indica si este handle todavía es válido. Es útil para evitar que se use un handle que ya fue eliminado o que apunta a un objeto inválido.
 
-    public Handle(int refInterna) {
+    public HandleHeap(int refInterna) {
         //cuando se crea el handle, se le asigna su referencia y se marca como activo.
         this.refInterna = refInterna;
         this.activo = true;
