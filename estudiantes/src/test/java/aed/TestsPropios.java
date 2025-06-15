@@ -67,4 +67,29 @@ public class TestsPropios {
         assertEquals(8, berretacoin.maximoTenedor());
         assertEquals(new Transaccion(0, 0, 10, 2), berretacoin.txMayorValorUltimoBloque());
     }
+
+    @Test
+    public void hackearConUnaSolaTransaccion() {
+        Transaccion[] bloque = {
+            new Transaccion(0, 0, 1, 5)
+        };
+
+        berretacoin.agregarBloque(bloque);
+        berretacoin.hackearTx();
+
+        assertEquals(0, berretacoin.txUltimoBloque().length);
+    }
+
+    @Test
+    public void transaccionQueDejaSaldoEnCeroDebeSerValida() {
+        Transaccion[] bloque = {
+            new Transaccion(0, 0, 1, 1) // El creador tiene 1
+        };
+
+        berretacoin.agregarBloque(bloque);
+
+        assertEquals(1, berretacoin.txUltimoBloque().length);
+        assertEquals(1, berretacoin.maximoTenedor());
+    }
+
 }
