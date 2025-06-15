@@ -31,10 +31,10 @@ public class Heap<T extends Comparable<T>> {
 
     // Constructores
     public Heap() {
-        this.heap = new ArrayList<>(); // heap vacío
+        this.heap = new ArrayList<>(); // heap vacío NO SE USA
     }
 
-    // Construir desde Array, complejidad O(n) porque usamos heapify (algoritmo de Floyd)
+    // Construir desde Array, complejidad O(n) porque usamos heapify (algoritmo de Floyd) NO SE USA
     public Heap(T[] secuencia) {
         this.heap = new ArrayList<>();
         for (int i = 0; i < secuencia.length; i++) {
@@ -56,7 +56,7 @@ public class Heap<T extends Comparable<T>> {
             handlesExternos[i] = handle; //O(1)
         } //creamos un arbol binario. No esta ordenado como heap
 
-        for (int i = (heap.size() / 2) - 1; i >= 0; i--) {
+        for (int i = (heap.size() / 2) - 1; i >= 0; i--) { //O(n)
             bajar(i);
         } 
     }
@@ -114,7 +114,7 @@ public class Heap<T extends Comparable<T>> {
         return handle;
     }
 
-    public T desencolar() {
+    public T desencolar() { //O(log x)
         if (estaVacio()) {
             throw new IllegalStateException("El heap está vacío.");
         }
@@ -125,7 +125,7 @@ public class Heap<T extends Comparable<T>> {
         heap.remove(ultimo);
 
         if (!estaVacio()) {
-            bajar(0);
+            bajar(0); //O(log x)
         }
         return max;
 

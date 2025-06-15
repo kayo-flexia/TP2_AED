@@ -17,12 +17,12 @@ public class Bloque {
         this.transaccionHandles = new ArrayList<>(t.length); //O(n)
         for (int i = 0; i < t.length; i++) {
             this.transaccionHandles.add(null); // Rellenar con nulls para usar set()
-        } //O(n)
+        } //O(nb)
 
         // Iterar sobre las transacciones para agregarlas a la ListaEnlazada y guardar sus handles
         for (Transaccion tx : t) {
             ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx); //O(1)
-            tx.setHandleEnLista(listaHandle); //O(1)
+            tx.setHandleEnLista(listaHandle); //O(1) Creo que no lo usamos
 
             // Usar el ID como índice en el ArrayList
             this.transaccionHandles.set(tx.id(), listaHandle); // O(1)

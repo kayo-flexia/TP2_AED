@@ -11,7 +11,7 @@ public class Transaccion implements Comparable<Transaccion> {
     private int monto;
     
     // CAMBIO: El handle debe ser del tipo correcto para la Lista Enlazada
-    private ListaEnlazada.HandleLE<Transaccion> handleEnLista; // Nombre más claro
+    private ListaEnlazada.HandleLE<Transaccion> handleEnLista; // Capaz no se usa
     private HandleHeap<Transaccion> handleEnHeap; // Si también se necesita un handle para el Heap
 
     public Transaccion(int id, int id_comprador, int id_vendedor, int monto) {

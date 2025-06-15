@@ -13,7 +13,7 @@ public class Berretacoin {
     private int montosTotalesUltimoBloque;
     private int cantidadTransaccionesUltimoBloque;
 
-    public Berretacoin(int n_usuarios) {
+    public Berretacoin(int n_usuarios) { //O(p)
         this.handlesUsuarios = new ArrayList<>(n_usuarios + 1);
         for (int i = 0; i <= n_usuarios; i++) {
            this.handlesUsuarios.add(null); // Pre-llenar con nulls
@@ -37,6 +37,8 @@ public class Berretacoin {
 
         this.maximoTenedor = usuarios.maximo();
         this.bloques = new ArrayList<>();
+
+
     }
 
     public void agregarBloque(Transaccion[] transacciones){
@@ -62,7 +64,7 @@ public class Berretacoin {
     }
 
 
-    public void actualizarMonto(Transaccion t) {
+    public void actualizarMonto(Transaccion t) { //O(log p)
         int idComprador = t.id_comprador();
         int idVendedor = t.id_vendedor();
         int montoTransaccion = t.monto();
@@ -87,8 +89,7 @@ public class Berretacoin {
     }
 
 
-
-    public Transaccion txMayorValorUltimoBloque(){
+    public Transaccion txMayorValorUltimoBloque(){ //O(1)
         //Devuelve la transacción de mayor valor del último bloque (sin extraerla). En caso de empate, devuelve aquella de mayor id
         //ya que this.bloques[bloques.size()] es el ultimo bloque, hago consultarMax() del ultimo bloque y es O(1)
         if (bloques.isEmpty()) {
@@ -99,7 +100,7 @@ public class Berretacoin {
         return mayorTransaccion;
     }
 
-    public Transaccion[] txUltimoBloque() {
+    public Transaccion[] txUltimoBloque() { //O(nb)
         if (bloques.isEmpty()) {
             return new Transaccion[0];
         }
@@ -123,6 +124,32 @@ public class Berretacoin {
 
 
     public void hackearTx() {
+        if (bloques.isEmpty()) return; // nada que hacer si no hay bloques
+
+        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
+        if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
+
+        Transaccion t = ultimoBloque.heap().desencolar();
+        int idComprador = t.id_comprador();
+        int idVendedor = t.id_vendedor();
+        int idTx = t.id();
+        int montoTransaccion = t.monto();
+
+        HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador);
+        HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor);
+        Usuario comprador = usuarios.obtenerValor(handleComprador); // O(1) con el método obtenerValor
+        Usuario vendedor = usuarios.obtenerValor(handleVendedor); // O(1) con el método obtenerValor
+
+        ultimoBloque.eliminarTransaccionPorId(idTx);
+
+        comprador.actualizarSaldo(montoTransaccion);
+        vendedor.actualizarSaldo(-montoTransaccion);
+
+        if (idComprador != 0) {
+            this.montosTotalesUltimoBloque -= montoTransaccion;
+            this.cantidadTransaccionesUltimoBloque -= 1;
+        }
+
         // if (bloques.isEmpty()) return; // nada que hacer si no hay bloques
 
         // Bloque ultimoBloque = bloques.get(bloques.size() - 1); //O(1)

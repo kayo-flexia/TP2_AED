@@ -72,7 +72,7 @@ public class ListaEnlazada<T> {
         return this.tamano;
     }
 
-    public void agregarAdelante(T elem) {
+    public void agregarAdelante(T elem) { //capaz sacamos
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
             this.primero = nuevo;
@@ -101,7 +101,7 @@ public class ListaEnlazada<T> {
         return new HandleLE<>(nuevo); // Devolvemos el handle
     }
 
-    public void agregarAtras(T elem) {
+    public void agregarAtras(T elem) { //capaz se saca
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
             this.primero = nuevo;
@@ -244,12 +244,11 @@ public class ListaEnlazada<T> {
         handle.getNodo().valor = nuevoValor;
     }
 
-    public ListaEnlazada(ListaEnlazada<T> lista) {
+    public ListaEnlazada(ListaEnlazada<T> lista) { //creo que es el constructor por copia
         for (int i = 0; i < lista.tamano; i++) {
             Nodo nuevo = new Nodo(lista.obtener(i));
             this.agregarAtras(nuevo.valor);
-        }
-        
+        }   
     }
     
     @Override
@@ -272,7 +271,7 @@ public class ListaEnlazada<T> {
         return new ListaIterador();
     }
 
-    private class ListaIterador implements Iterador<T> {
+    private class ListaIterador implements Iterador<T> { //capaz se saca
     	private Nodo actual = primero;
 
         int dedito = 0;
