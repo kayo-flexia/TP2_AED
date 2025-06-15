@@ -150,6 +150,12 @@ public class Berretacoin {
             this.cantidadTransaccionesUltimoBloque -= 1;
         }
 
+        usuarios.actualizar(handleComprador);
+        usuarios.actualizar(handleVendedor);
+
+        this.maximoTenedor = usuarios.maximo();
+
+
         // if (bloques.isEmpty()) return; // nada que hacer si no hay bloques
 
         // Bloque ultimoBloque = bloques.get(bloques.size() - 1); //O(1)
