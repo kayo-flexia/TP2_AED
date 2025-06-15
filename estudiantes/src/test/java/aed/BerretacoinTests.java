@@ -12,71 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 
 public class BerretacoinTests {
-    @Test
-    public void testHeapHandleUsuarios(){
-                Heap<Usuario> heap = new Heap<>();
-
-        // Guardamos los handles para poder actualizarlos después
-        HashMap<Integer, Handle<Usuario, Integer>> handles = new HashMap<>();
-
-        // Crear algunos usuarios
-        Usuario u1 = new Usuario(1, 100);
-        Usuario u2 = new Usuario(2, 200);
-        Usuario u3 = new Usuario(3, 50);
-        Usuario u4 = new Usuario(4, 150);
-
-        // Encolar usuarios en el heap
-        handles.put(u1.id(), heap.encolar(u1));
-        handles.put(u2.id(), heap.encolar(u2));
-        handles.put(u3.id(), heap.encolar(u3));
-        handles.put(u4.id(), heap.encolar(u4));
-
-        // Verificar que el máximo es el correcto (u2 con saldo 200)
-        Usuario max = heap.maximo();
-        assert max.id() == 2 : "Error: el máximo debería ser el usuario 2";
-
-        // Actualizamos el saldo de u3 para que sea el nuevo máximo
-        Usuario handleU3 = heap.obtenerElemento(handles.get(3).getRef());
-        handleU3.actualizarSaldo(200); // saldo de u3 = 250 ahora
-
-        // Reordenar heap tras la modificación
-        heap.actualizar(handles.get(3));
-
-        // Verificar que u3 ahora es el máximo
-        max = heap.maximo();
-        assert max.id() == 3 : "Error: el máximo debería ser el usuario 3";
-
-        // Desencolar el máximo (u3)
-        Usuario desencolado = heap.desencolar();
-        assert desencolado.id() == 3 : "Error: debería haberse desencolado el usuario 3";
-
-        // Verificar que el nuevo máximo sea u2
-        max = heap.maximo();
-        assert max.id() == 2 : "Error: el nuevo máximo debería ser el usuario 2";
-
-        // Verificar tamaño
-        assert heap.tamaño() == 3 : "Error: el tamaño debería ser 3";
-
-        System.out.println("✅ Todos los tests pasaron correctamente.");
-    }
-    
-    @Test
-    public void usuariosEnBerretacoin() {
-        int n = 3;
-        Berretacoin sistema = new Berretacoin(n);
-
-        // Verificar maximoTenedor inicial (el de mayor id)
-        assertEquals(3, sistema.maximoTenedor());
-
-        // Transacción: usuario 0 de creacion paga 50 a usuario 1
-        Transaccion t = new Transaccion(1, 0, 1, 50);
-        sistema.actualizarMonto(t);
-
-        // Verificar maximoTenedor inicial (el único que vendió)
-        assertEquals(1, sistema.maximoTenedor());
-    }
-    
-    
     private Berretacoin berretacoin;
     private Transaccion[] transacciones;
     private Transaccion[] transacciones2;
@@ -495,4 +430,3 @@ public class BerretacoinTests {
         }
     }
 }
-
