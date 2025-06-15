@@ -2,7 +2,7 @@ package aed;
 
 // Importar el Handle de la Lista Enlazada
 import aed.estructuras.listaEnlazada.ListaEnlazada;
-import aed.estructuras.heap.HandleHeap; // Mantener si la Transaccion también necesita un handle para el Heap
+import aed.estructuras.heap.Heap.HandleHeap;; // Mantener si la Transaccion también necesita un handle para el Heap
 
 public class Transaccion implements Comparable<Transaccion> {
     private int id;

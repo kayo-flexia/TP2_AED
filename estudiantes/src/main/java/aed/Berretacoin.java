@@ -2,14 +2,14 @@ package aed;
 
 import java.util.ArrayList;
 import aed.estructuras.heap.Heap;
-import aed.estructuras.heap.HandleHeap;
+import aed.estructuras.heap.Heap.HandleHeap;
 import aed.estructuras.listaEnlazada.ListaEnlazada;
 
 public class Berretacoin {
     private ArrayList<Bloque> bloques;
     private Usuario maximoTenedor;
     private Heap<Usuario> usuarios;
-    private ArrayList<HandleHeap<Usuario>> handlesUsuarios;
+    private ArrayList<Heap.HandleHeap<Usuario>> handlesUsuarios;
     private int montosTotalesUltimoBloque;
     private int cantidadTransaccionesUltimoBloque;
 
