@@ -145,57 +145,17 @@ public class Berretacoin {
         comprador.actualizarSaldo(montoTransaccion);
         vendedor.actualizarSaldo(-montoTransaccion);
 
+        // Si es de creación, no hace falta hackear nada
         if (idComprador != 0) {
             this.montosTotalesUltimoBloque -= montoTransaccion;
             this.cantidadTransaccionesUltimoBloque -= 1;
         }
 
+        // Actualizar los handles de los usuarios
         usuarios.actualizar(handleComprador);
         usuarios.actualizar(handleVendedor);
 
         this.maximoTenedor = usuarios.maximo();
-
-
-        // if (bloques.isEmpty()) return; // nada que hacer si no hay bloques
-
-        // Bloque ultimoBloque = bloques.get(bloques.size() - 1); //O(1)
-        // Heap<Transaccion> heapTx = ultimoBloque.heap(); //O(1)
-
-        // if (heapTx.tamaño() == 0) return; // bloque vacío, nada que hackear
-
-        // // 1. Desencolar la transacción de mayor valor (raíz)
-        // Transaccion txHackeada = heapTx.desencolar(); //O(log nb)
-
-        // // 2. Restar el monto de la transacción hackeada del total del último bloque
-        // if (txHackeada.id_comprador() != 0) {
-        //     montosTotalesUltimoBloque -= txHackeada.monto();
-        // } //O(1)
-
-
-        // // revertir saldos: sumamos monto al comprador (le devolvemos el dinero)
-        // // y restamos monto al vendedor (le quitamos lo que recibió)
-        // int idComprador = txHackeada.id_comprador(); //O(1)
-        // int idVendedor = txHackeada.id_vendedor(); //O(1)
-
-        // Handle<Usuario> handleComprador = handlesUsuarios[idComprador]; //O(1)
-        // Handle<Usuario> handleVendedor = handlesUsuarios[idVendedor]; //O(1)
-
-        // Usuario comprador = usuarios.obtenerElemento(handleComprador.getRef()); //O(1)
-        // Usuario vendedor = usuarios.obtenerElemento(handleVendedor.getRef()); //O(1)
-
-        // comprador.actualizarSaldo(txHackeada.monto()); //O(1)
-        // vendedor.actualizarSaldo(-txHackeada.monto()); //O(1)
-
-        // // actualizar heap de usuarios (log p)
-        // usuarios.actualizar(handleComprador);
-        // usuarios.actualizar(handleVendedor);
-
-        // // actualizar maximoTenedor
-        // maximoTenedor = usuarios.maximo(); //O(1)
-
-        // // Eliminar la transacción del arreglo ordenado por ID dentro del bloque
-        // ultimoBloque.eliminarTransaccionPorId(txHackeada);
-
     }
 
 }

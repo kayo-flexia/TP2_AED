@@ -244,7 +244,8 @@ public class ListaEnlazada<T> {
         handle.getNodo().valor = nuevoValor;
     }
 
-    public ListaEnlazada(ListaEnlazada<T> lista) { //creo que es el constructor por copia
+    // Constructor por COPIA
+    public ListaEnlazada(ListaEnlazada<T> lista) {
         for (int i = 0; i < lista.tamano; i++) {
             Nodo nuevo = new Nodo(lista.obtener(i));
             this.agregarAtras(nuevo.valor);
