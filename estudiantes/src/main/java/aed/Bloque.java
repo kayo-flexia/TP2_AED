@@ -14,20 +14,35 @@ public class Bloque {
     public Bloque(Transaccion[] t) { //O(nb)
         this.transaccionesPorMonto = new Heap<>(t);  //O(n)
         this.transaccionesEnOrden = new ListaEnlazada<>(); // O(1)
-        this.transaccionHandles = new ArrayList<>(t.length); //O(n)
-        for (int i = 0; i < t.length; i++) {
-            this.transaccionHandles.add(null); // Rellenar con nulls para usar set()
-        } //O(nb)
+        
+        // Esto es un fix para el caso de test que el ID de transacción no empieza en 0.
+        // Por alguna razón solo tomando el ID máximo de las transacciones no funciona,
+        // aunque se supone que los IDs son seguidos, siempre el último debería ser el mayor.
 
-        // Iterar sobre las transacciones para agregarlas a la ListaEnlazada y guardar sus handles
+        // 1. Calcular máximo ID de transacción
+        int maxIdTx = 0;
         for (Transaccion tx : t) {
-            ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx); //O(1)
-            tx.setHandleEnLista(listaHandle); //O(1) Creo que no lo usamos
-
-            // Usar el ID como índice en el ArrayList
-            this.transaccionHandles.set(tx.id(), listaHandle); // O(1)
-        } //O(nb)
+            if (tx.id() > maxIdTx) {
+                maxIdTx = tx.id();
+            }
+        }
+        
+        // 2. Crear la lista con tamaño maxIdTx + 1
+        this.transaccionHandles = new ArrayList<>(maxIdTx + 1);
+        
+        // 3. Rellenar con nulls
+        for (int i = 0; i <= maxIdTx; i++) {
+            this.transaccionHandles.add(null);
+        }
+        
+        // 4. Insertar handles en el índice del ID de la transacción
+        for (Transaccion tx : t) {
+            ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx);
+            tx.setHandleEnLista(listaHandle);
+            this.transaccionHandles.set(tx.id(), listaHandle);
+        }
     }
+
 
     public Heap<Transaccion> heap() {
         return transaccionesPorMonto;
