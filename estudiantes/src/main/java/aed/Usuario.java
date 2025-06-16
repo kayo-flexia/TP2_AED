@@ -1,6 +1,5 @@
 package aed;
 
-// Implementa el Comparable para poder usarlo en el Heap
 public class Usuario implements Comparable<Usuario> {
     private int id;
     private int saldo;
@@ -28,19 +27,17 @@ public class Usuario implements Comparable<Usuario> {
     }
 
 
-    // Agregue el equals y el compareTo para el Heap
-     @Override
+    @Override
     public boolean equals(Object otro){
         if (this == otro) return true; // Misma referencia, son iguales
-        if (otro == null || getClass() != otro.getClass()) return false; // Null o de diferente clase
+        if (otro == null || getClass() != otro.getClass()) return false;
 
-        Usuario that = (Usuario) otro; // Casteo seguro
-        return this.id == that.id; // Comparación por ID
+        Usuario that = (Usuario) otro;
+        return this.id == that.id;
     }
 
     @Override
     public int hashCode() {
-        // Es crucial sobrescribir hashCode si sobrescribes equals
         return Integer.hashCode(id);
     }
 

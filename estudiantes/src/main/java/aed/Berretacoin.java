@@ -16,7 +16,7 @@ public class Berretacoin {
     public Berretacoin(int n_usuarios) { //O(p)
         this.handlesUsuarios = new ArrayList<>(n_usuarios + 1);
         for (int i = 0; i <= n_usuarios; i++) {
-           this.handlesUsuarios.add(null); // Pre-llenar con nulls
+           this.handlesUsuarios.add(null); // llenar con nulls, fix del error que teniamos
         }
 
         Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1];
@@ -31,7 +31,6 @@ public class Berretacoin {
 
         // Guardar los handles en la lista
         for (int i = 0; i <= n_usuarios; i++) {
-            // Asegurarse de que el ID del usuario coincida con el índice
             handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]);
         }
 
@@ -90,10 +89,9 @@ public class Berretacoin {
 
 
     public Transaccion txMayorValorUltimoBloque(){ //O(1)
-        //Devuelve la transacción de mayor valor del último bloque (sin extraerla). En caso de empate, devuelve aquella de mayor id
-        //ya que this.bloques[bloques.size()] es el ultimo bloque, hago consultarMax() del ultimo bloque y es O(1)
+        //Devuelve la transacción de mayor valor del último bloque (sin extraerla).
         if (bloques.isEmpty()) {
-            return null; // o lanzar una excepción si no hay bloques
+            return null; 
         }
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         Transaccion mayorTransaccion = ultimoBloque.heap().maximo(); // O(1) porque es un heap
@@ -105,7 +103,6 @@ public class Berretacoin {
             return new Transaccion[0];
         }
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
-        // Suponemos que Bloque tiene un método que devuelve un arreglo con las transacciones ordenadas por ID
         return ultimoBloque.getTransaccionesArray(); //O(nb)
     }
 
@@ -124,7 +121,7 @@ public class Berretacoin {
 
 
     public void hackearTx() {
-        if (bloques.isEmpty()) return; // nada que hacer si no hay bloques
+        if (bloques.isEmpty()) return;
 
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
@@ -149,7 +146,7 @@ public class Berretacoin {
         if (idComprador != 0) {
             this.montosTotalesUltimoBloque -= montoTransaccion;
             this.cantidadTransaccionesUltimoBloque -= 1;
-        }
+        } 
 
         // Actualizar los handles de los usuarios
         usuarios.actualizar(handleComprador);

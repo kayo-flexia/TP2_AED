@@ -15,7 +15,7 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
-    // Mover HandleHeap acá como clase estática anidada
+    // Definimos el handle para el heap
     public static class HandleHeap<T> {
         private Integer refInterna;
         private boolean activo;
