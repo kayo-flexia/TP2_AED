@@ -15,35 +15,32 @@ public class Berretacoin {
 
     public Berretacoin(int n_usuarios) { //O(p)
         this.handlesUsuarios = new ArrayList<>(n_usuarios + 1);
-        for (int i = 0; i <= n_usuarios; i++) {
-           this.handlesUsuarios.add(null); // Pre-llenar con nulls
+        for (int i = 0; i <= n_usuarios; i++) { //O(p)
+           this.handlesUsuarios.add(null); // llenar con nulls, fix del error que teniamos
         }
 
-        Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1];
-        HandleHeap<Usuario>[] handles = new HandleHeap[n_usuarios + 1];
+        Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1]; //O(1)?
+        HandleHeap<Usuario>[] handles = new HandleHeap[n_usuarios + 1]; //O(1)
 
-        for (int i = 0; i <= n_usuarios; i++) {
-            arregloUsuarios[i] = new Usuario(i);
-            if (i == 0) arregloUsuarios[i].actualizarSaldo(-1);
+        for (int i = 0; i <= n_usuarios; i++) { //O(p)
+            arregloUsuarios[i] = new Usuario(i); //O(1)
+            if (i == 0) arregloUsuarios[i].actualizarSaldo(-1); //O(1)
         }
 
-        this.usuarios = new Heap<>(arregloUsuarios, handles);
+        this.usuarios = new Heap<>(arregloUsuarios, handles); //O(p)
 
         // Guardar los handles en la lista
         for (int i = 0; i <= n_usuarios; i++) {
-            // Asegurarse de que el ID del usuario coincida con el índice
-            handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]);
+            handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]); //O(1), llenamos todas las posiciones.
         }
 
-        this.maximoTenedor = usuarios.maximo();
-        this.bloques = new ArrayList<>();
-
-
+        this.maximoTenedor = usuarios.maximo(); //O(1)
+        this.bloques = new ArrayList<>(); //O(1)
     }
 
     public void agregarBloque(Transaccion[] transacciones){
         Bloque b = new Bloque(transacciones); //O(nb)
-        this.bloques.add(b); //O(1)
+        this.bloques.add(b); //O(1) MAL, es O(la cantidad de bloques). Estamos concatenando un elemento a un array (porque no hay posiciones disponibles, ya que nunca definimos el tamaño del array bloques), y eso cuesta O(la cantidad de bloques + 1). estamos agregando una nueva variable de complejidad: la cantidad de bloques. Se solucionaría si usamos vector
 
         int sumaMontos = 0;
         int cantidadValidas = 0;
@@ -65,35 +62,34 @@ public class Berretacoin {
 
 
     public void actualizarMonto(Transaccion t) { //O(log p)
-        int idComprador = t.id_comprador();
-        int idVendedor = t.id_vendedor();
-        int montoTransaccion = t.monto();
+        int idComprador = t.id_comprador(); //O(1)
+        int idVendedor = t.id_vendedor(); //O(1)
+        int montoTransaccion = t.monto(); //O(1)
 
         // Acceso O(1) usando el ID como índice
-        HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador);
-        HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor);
+        HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador); //O(1)
+        HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor); //O(1)
 
-        if (handleComprador == null || handleVendedor == null || !handleComprador.estaActivo() || !handleVendedor.estaActivo()) {
-            System.err.println("Error: Transacción con ID de usuario inválido o inactivo: Comprador " + idComprador + ", Vendedor " + idVendedor);
+        if (handleComprador == null || handleVendedor == null || !handleComprador.estaActivo() || !handleVendedor.estaActivo()) { //O(1)
+            System.err.println("Error: Transacción con ID de usuario inválido o inactivo: Comprador " + idComprador + ", Vendedor " + idVendedor); //O(1)
             return;
         }
 
         Usuario comprador = usuarios.obtenerValor(handleComprador); // O(1) con el método obtenerValor
         Usuario vendedor = usuarios.obtenerValor(handleVendedor); // O(1) con el método obtenerValor
 
-        comprador.actualizarSaldo(-montoTransaccion);
-        vendedor.actualizarSaldo(montoTransaccion);
+        comprador.actualizarSaldo(-montoTransaccion); //O(1)
+        vendedor.actualizarSaldo(montoTransaccion); //O(1)
 
-        usuarios.actualizar(handleComprador);
-        usuarios.actualizar(handleVendedor);
+        usuarios.actualizar(handleComprador); //O(log p)
+        usuarios.actualizar(handleVendedor); //O(log p)
     }
 
 
     public Transaccion txMayorValorUltimoBloque(){ //O(1)
-        //Devuelve la transacción de mayor valor del último bloque (sin extraerla). En caso de empate, devuelve aquella de mayor id
-        //ya que this.bloques[bloques.size()] es el ultimo bloque, hago consultarMax() del ultimo bloque y es O(1)
+        //Devuelve la transacción de mayor valor del último bloque (sin extraerla).
         if (bloques.isEmpty()) {
-            return null; // o lanzar una excepción si no hay bloques
+            return null; 
         }
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         Transaccion mayorTransaccion = ultimoBloque.heap().maximo(); // O(1) porque es un heap
@@ -105,7 +101,6 @@ public class Berretacoin {
             return new Transaccion[0];
         }
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
-        // Suponemos que Bloque tiene un método que devuelve un arreglo con las transacciones ordenadas por ID
         return ultimoBloque.getTransaccionesArray(); //O(nb)
     }
 
@@ -124,7 +119,7 @@ public class Berretacoin {
 
 
     public void hackearTx() {
-        if (bloques.isEmpty()) return; // nada que hacer si no hay bloques
+        if (bloques.isEmpty()) return;
 
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
@@ -149,7 +144,7 @@ public class Berretacoin {
         if (idComprador != 0) {
             this.montosTotalesUltimoBloque -= montoTransaccion;
             this.cantidadTransaccionesUltimoBloque -= 1;
-        }
+        } 
 
         // Actualizar los handles de los usuarios
         usuarios.actualizar(handleComprador);

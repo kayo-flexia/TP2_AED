@@ -8,8 +8,7 @@ import java.util.ArrayList;
 public class Bloque {
     private Heap<Transaccion> transaccionesPorMonto; // Heap de transacciones por monto
     private ListaEnlazada<Transaccion> transaccionesEnOrden; // ListaEnlazada en lugar de array para mantener el orden de inserción/otros órdenes
-    // CAMBIO: Usamos un HashMap para mapear IDs a sus Handles de la ListaEnlazada
-    private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles; // Nombre más simple
+    private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles;
 
     public Bloque(Transaccion[] t) { //O(nb)
         this.transaccionesPorMonto = new Heap<>(t);  //O(n)
@@ -19,7 +18,7 @@ public class Bloque {
         // Por alguna razón solo tomando el ID máximo de las transacciones no funciona,
         // aunque se supone que los IDs son seguidos, siempre el último debería ser el mayor.
 
-        // 1. Calcular máximo ID de transacción
+        //Calcular máximo ID de transacción
         int maxIdTx = 0;
         for (Transaccion tx : t) {
             if (tx.id() > maxIdTx) {
@@ -27,15 +26,15 @@ public class Bloque {
             }
         }
         
-        // 2. Crear la lista con tamaño maxIdTx + 1
+        //Crear la lista
         this.transaccionHandles = new ArrayList<>(maxIdTx + 1);
         
-        // 3. Rellenar con nulls
+        // Rellenar con nulls
         for (int i = 0; i <= maxIdTx; i++) {
             this.transaccionHandles.add(null);
         }
         
-        // 4. Insertar handles en el índice del ID de la transacción
+        //Insertar handles en el índice del ID de la transacción
         for (Transaccion tx : t) {
             ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx);
             tx.setHandleEnLista(listaHandle);
@@ -60,7 +59,7 @@ public class Bloque {
         ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id); //O(1)
 
 
-        if (handle != null && handle.estaActivo()) { // Verificar si el handle existe y es válido
+        if (handle != null && handle.estaActivo()) { 
             transaccionesEnOrden.eliminar(handle); // Eliminar de la ListaEnlazada usando el handle (O(1))
             handle.invalidar(); // Marcar el handle como inactivo
         }

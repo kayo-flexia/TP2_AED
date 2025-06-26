@@ -15,7 +15,7 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
-    // Mover HandleHeap acá como clase estática anidada
+    // Definimos el handle para el heap
     public static class HandleHeap<T> {
         private Integer refInterna;
         private boolean activo;
@@ -166,12 +166,12 @@ public class Heap<T extends Comparable<T>> {
         if (handle == null || !handle.estaActivo()) {
             throw new IllegalArgumentException("El handle proporcionado es nulo o inactivo.");
         }
-        return heap.get(handle.getRef()).valor;
+        return heap.get(handle.getRef()).valor; //O(1) porque es un arrayList y accedemos a una posicion.
     }
 
-    public void actualizar(HandleHeap<T> handle) {
-        int i = handle.getRef();
-        bajar(i);
-        subir(i);
+    public void actualizar(HandleHeap<T> handle) { //O(log p)
+        int i = handle.getRef(); //O(1)
+        bajar(i); //O(log p)
+        subir(i); //O(log p)
     }
 }

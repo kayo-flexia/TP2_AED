@@ -18,13 +18,12 @@ public class ListaEnlazada<T> {
         }
     }
 
-    // --- Inicio del HandleLE ---
+    // Definimos el HANDLE apra la lista enlazada
     // Clase HandleLE: permite acceso O(1) a un nodo específico
     public static class HandleLE<T> {
-        // Encapsula una referencia directa al nodo de la ListaEnlazada
         // Necesita ser de tipo ListaEnlazada<T>.Nodo porque Nodo es una clase interna no estática de ListaEnlazada
         private ListaEnlazada<T>.Nodo nodoInterno;
-        private boolean activo; // Indica si el handle sigue siendo válido
+        private boolean activo; // Indica si el handle sigue siendo válido o lo invalidamos
 
         // Constructor: Solo el método de la lista enlazada debería crear Handles
         protected HandleLE(ListaEnlazada<T>.Nodo nodo) {
@@ -72,7 +71,7 @@ public class ListaEnlazada<T> {
         return this.tamano;
     }
 
-    public void agregarAdelante(T elem) { //capaz sacamos
+    public void agregarAdelante(T elem) {
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
             this.primero = nuevo;
@@ -86,7 +85,7 @@ public class ListaEnlazada<T> {
         this.tamano++;
     }
 
-        // --- NUEVO MÉTODO: agregarAdelante que devuelve Handle ---
+
     public HandleLE<T> agregarAdelanteConHandle(T elem) { //O(1)
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
@@ -101,7 +100,7 @@ public class ListaEnlazada<T> {
         return new HandleLE<>(nuevo); // Devolvemos el handle
     }
 
-    public void agregarAtras(T elem) { //capaz se saca
+    public void agregarAtras(T elem) { 
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
             this.primero = nuevo;
@@ -129,7 +128,6 @@ public class ListaEnlazada<T> {
 
     }
 
-        // --- NUEVO MÉTODO: agregarAtras que devuelve Handle ---
     public HandleLE<T> agregarAtrasConHandle(T elem) { //O(1)
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
@@ -222,7 +220,7 @@ public class ListaEnlazada<T> {
         }
 
         this.tamano--;
-        handle.invalidar(); // Importante: invalida el handle para evitar usos incorrectos
+        handle.invalidar(); // INvalidar el handle del que elimino
     }
 
     public void modificar(int indice, T elem) {
@@ -244,7 +242,7 @@ public class ListaEnlazada<T> {
         handle.getNodo().valor = nuevoValor;
     }
 
-    // Constructor por COPIA
+    // Constructor por copia
     public ListaEnlazada(ListaEnlazada<T> lista) {
         for (int i = 0; i < lista.tamano; i++) {
             Nodo nuevo = new Nodo(lista.obtener(i));
@@ -272,7 +270,7 @@ public class ListaEnlazada<T> {
         return new ListaIterador();
     }
 
-    private class ListaIterador implements Iterador<T> { //capaz se saca
+    private class ListaIterador implements Iterador<T> {
     	private Nodo actual = primero;
 
         int dedito = 0;

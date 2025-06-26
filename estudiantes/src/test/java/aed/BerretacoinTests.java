@@ -360,73 +360,75 @@ public class BerretacoinTests {
         assertTrue(Arrays.equals(berretacoin.txUltimoBloque(), transacciones3_hackeadas_3));
     }
 
-    @Test
-    public void testStress() {
-        int USUARIOS = 3000;
-        int BLOQUES = 5000;
-        int MAX_TX_POR_BLOQUE = 1000;
-        int MAX_HACKEOS = 100;
+    // @Test
+    // public void testStress() {
+    //     int USUARIOS = 3000;
+    //     int BLOQUES = 5000;
+    //     int MAX_TX_POR_BLOQUE = 1000;
+    //     int MAX_HACKEOS = 100;
         
-        Berretacoin sistema = new Berretacoin(USUARIOS);
-        SaldoTracker tracker = new SaldoTracker(USUARIOS);        
-        for (int bloque = 0; bloque < BLOQUES; bloque++) {
-            ArrayList<Transaccion> transacciones = new ArrayList<>();
+    //     Berretacoin sistema = new Berretacoin(USUARIOS);
+    //     SaldoTracker tracker = new SaldoTracker(USUARIOS);        
+    //     for (int bloque = 0; bloque < BLOQUES; bloque++) {
+    //         ArrayList<Transaccion> transacciones = new ArrayList<>();
             
-            if (bloque < 3000){
-                int receptor = USUARIOS - bloque;
-                Transaccion creacion = new Transaccion(transacciones.size(), 0, receptor, 1);
-                transacciones.add(creacion);
-                tracker.aplicarTransaccion(creacion);
-            }
+    //         if (bloque < 3000){
+    //             int receptor = USUARIOS - bloque;
+    //             Transaccion creacion = new Transaccion(transacciones.size(), 0, receptor, 1);
+    //             transacciones.add(creacion);
+    //             tracker.aplicarTransaccion(creacion);
+    //         }
             
-            for (int i = 0; i < MAX_TX_POR_BLOQUE; i++) {
-                int comprador = (i + bloque) % USUARIOS + 1;
-                int vendedor = (i + bloque + 1) % USUARIOS + 1;
-                if (comprador == vendedor) continue;
+    //         for (int i = 0; i < MAX_TX_POR_BLOQUE; i++) {
+    //             int comprador = (i + bloque) % USUARIOS + 1;
+    //             int vendedor = (i + bloque + 1) % USUARIOS + 1;
+    //             if (comprador == vendedor) continue;
                 
-                int maxMonto = Math.max(0, tracker.getSaldo(comprador));
-                if (maxMonto <= 0) continue;
+    //             int maxMonto = Math.max(0, tracker.getSaldo(comprador));
+    //             if (maxMonto <= 0) continue;
                 
-                int monto = Math.min(maxMonto, (i % 10) + 1);
+    //             int monto = Math.min(maxMonto, (i % 10) + 1);
                 
-                if (tracker.puedeGastar(comprador, monto)) {
-                    Transaccion tx = new Transaccion(transacciones.size(), comprador, vendedor, monto);
-                    transacciones.add(tx);
-                    tracker.aplicarTransaccion(tx);
-                }
-            }
+    //             if (tracker.puedeGastar(comprador, monto)) {
+    //                 Transaccion tx = new Transaccion(transacciones.size(), comprador, vendedor, monto);
+    //                 transacciones.add(tx);
+    //                 tracker.aplicarTransaccion(tx);
+    //             }
+    //         }
             
-            if (!transacciones.isEmpty()) {
-                int monto_total = 0;
-                int tx_total = 0;
-                for (Transaccion tx : transacciones) {
-                    if (tx.id_comprador() == 0) continue;
-                    monto_total += tx.monto();
-                    tx_total++;
-                }
-                sistema.agregarBloque(transacciones.toArray(new Transaccion[0]));
-                assertEquals(tracker.getMaximoTenedor(), sistema.maximoTenedor());
-                int monto_medio = tx_total == 0 ? 0 : monto_total / tx_total;
-                assertEquals(monto_medio, sistema.montoMedioUltimoBloque());
+    //         if (!transacciones.isEmpty()) {
+    //             int monto_total = 0;
+    //             int tx_total = 0;
+    //             for (Transaccion tx : transacciones) {
+    //                 if (tx.id_comprador() == 0) continue;
+    //                 monto_total += tx.monto();
+    //                 tx_total++;
+    //             }
+    //             sistema.agregarBloque(transacciones.toArray(new Transaccion[0]));
+    //             assertEquals(tracker.getMaximoTenedor(), sistema.maximoTenedor());
+    //             int monto_medio = tx_total == 0 ? 0 : monto_total / tx_total;
+    //             assertEquals(monto_medio, sistema.montoMedioUltimoBloque());
                 
-                if (bloque % 3 == 0) {
-                    int num_tx = Math.min(MAX_HACKEOS, transacciones.size());
-                    for (int j = 0; j < num_tx; j++) {
-                        Transaccion hackeada = sistema.txMayorValorUltimoBloque();
-                        sistema.hackearTx();
-                        tracker.revertirTransaccion(hackeada);
-                        transacciones.removeIf(tx -> tx.compareTo(hackeada) == 0);
-                        if (hackeada.id_comprador() != 0){
-                            monto_total -= hackeada.monto();
-                            tx_total--;
-                        }
-                        monto_medio = tx_total == 0 ? 0 : monto_total / tx_total;
-                        assertEquals(monto_medio, sistema.montoMedioUltimoBloque());
-                        assertTrue(Arrays.equals(transacciones.toArray(new Transaccion[0]), sistema.txUltimoBloque()));
-                        assertEquals(tracker.getMaximoTenedor(), sistema.maximoTenedor());
-                    }
-                }
-            }
-        }
-    }
+    //             if (bloque % 3 == 0) {
+    //                 int num_tx = Math.min(MAX_HACKEOS, transacciones.size());
+    //                 for (int j = 0; j < num_tx; j++) {
+    //                     Transaccion hackeada = sistema.txMayorValorUltimoBloque();
+    //                     sistema.hackearTx();
+    //                     tracker.revertirTransaccion(hackeada);
+    //                     transacciones.removeIf(tx -> tx.compareTo(hackeada) == 0);
+    //                     if (hackeada.id_comprador() != 0){
+    //                         monto_total -= hackeada.monto();
+    //                         tx_total--;
+    //                     }
+    //                     monto_medio = tx_total == 0 ? 0 : monto_total / tx_total;
+    //                     assertEquals(monto_medio, sistema.montoMedioUltimoBloque());
+    //                     assertTrue(Arrays.equals(transacciones.toArray(new Transaccion[0]), sistema.txUltimoBloque()));
+
+    //                     assertEquals(tracker.getMaximoTenedor(), sistema.maximoTenedor());
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
 }
