@@ -7,7 +7,6 @@ import aed.estructuras.listaEnlazada.ListaEnlazada;
 
 public class Berretacoin {
     private ArrayList<Bloque> bloques;
-    private Usuario maximoTenedor;
     private Heap<Usuario> usuarios;
     private ArrayList<Heap.HandleHeap<Usuario>> handlesUsuarios;
     private int montosTotalesUltimoBloque;
@@ -27,17 +26,14 @@ public class Berretacoin {
             if (i == 0) arregloUsuarios[i].actualizarSaldo(-1);
         }
 
-        this.usuarios = new Heap<>(arregloUsuarios, handles);
+        this.usuarios = new Heap<>(arregloUsuarios, handles); // O (P)
 
         // Guardar los handles en la lista
         for (int i = 0; i <= n_usuarios; i++) {
             handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]);
         }
 
-        this.maximoTenedor = usuarios.maximo();
         this.bloques = new ArrayList<>();
-
-
     }
 
     public void agregarBloque(Transaccion[] transacciones){
@@ -56,7 +52,6 @@ public class Berretacoin {
             } //O(1)
         }
 
-        this.maximoTenedor = usuarios.maximo(); //O(1)
         this.montosTotalesUltimoBloque = sumaMontos; //O(1)
         this.cantidadTransaccionesUltimoBloque = cantidadValidas; // O(1)
         //O(nb + nb*log p) = O(nb*log p)
@@ -109,7 +104,7 @@ public class Berretacoin {
 
 
     public int maximoTenedor(){
-        return this.maximoTenedor.id(); //O(1) ya que tengo usuarios de 0 a n, pero el usuario 0 no existe
+        return usuarios.maximo().id(); //O(1) ya que tengo usuarios de 0 a n, pero el usuario 0 no existe
     }
 
     public int montoMedioUltimoBloque() {
@@ -151,8 +146,6 @@ public class Berretacoin {
         // Actualizar los handles de los usuarios
         usuarios.actualizar(handleComprador);
         usuarios.actualizar(handleVendedor);
-
-        this.maximoTenedor = usuarios.maximo();
     }
 
 }
