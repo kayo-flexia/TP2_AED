@@ -25,14 +25,6 @@ public class Heap<T extends Comparable<T>> {
             this.activo = true;
         }
 
-        public int getRef() {
-            return refInterna;
-        }
-
-        protected void setRef(int nuevaRef) {
-            this.refInterna = nuevaRef;
-        }
-
         public boolean estaActivo() {
             return activo;
         }
@@ -55,8 +47,9 @@ public class Heap<T extends Comparable<T>> {
         return 2 * i + 2;
     }
 
-    public Heap() {
-        this.heap = new ArrayList<>();
+    public Heap(int cap) {
+        // Cap nos garantiza después que todas las OP son O(1) si nos mantenemos en ese rango
+        this.heap = new ArrayList<>(cap); // O(1)
     }
 
     public Heap(T[] secuencia) {
@@ -71,8 +64,8 @@ public class Heap<T extends Comparable<T>> {
         }
     }
 
-    public Heap(T[] secuencia, HandleHeap<T>[] handlesExternos) {
-        this.heap = new ArrayList<>();
+    public Heap(T[] secuencia, HandleHeap<T>[] handlesExternos, int cap) {
+        this.heap = new ArrayList<>(cap);
         for (int i = 0; i < secuencia.length; i++) {
             HandleHeap<T> handle = new HandleHeap<>(i);
             heap.add(new Nodo(secuencia[i], handle));
@@ -112,8 +105,8 @@ public class Heap<T extends Comparable<T>> {
         heap.set(i, nj);
         heap.set(j, ni);
 
-        ni.handle.setRef(j);
-        nj.handle.setRef(i);
+        ni.handle.refInterna = j;
+        nj.handle.refInterna = i;
     }
 
     private void subir(int i) {
@@ -166,11 +159,11 @@ public class Heap<T extends Comparable<T>> {
         if (handle == null || !handle.estaActivo()) {
             throw new IllegalArgumentException("El handle proporcionado es nulo o inactivo.");
         }
-        return heap.get(handle.getRef()).valor; //O(1) porque es un arrayList y accedemos a una posicion.
+        return heap.get(handle.refInterna).valor; //O(1) porque es un arrayList y accedemos a una posicion.
     }
 
     public void actualizar(HandleHeap<T> handle) { //O(log p)
-        int i = handle.getRef(); //O(1)
+        int i = handle.refInterna; //O(1)
         bajar(i); //O(log p)
         subir(i); //O(log p)
     }

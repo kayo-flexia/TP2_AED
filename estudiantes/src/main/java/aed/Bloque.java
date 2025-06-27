@@ -7,13 +7,16 @@ import java.util.ArrayList;
 
 public class Bloque {
     private Heap<Transaccion> transaccionesPorMonto; // Heap de transacciones por monto
-    private ListaEnlazada<Transaccion> transaccionesEnOrden; // ListaEnlazada en lugar de array para mantener el orden de inserción/otros órdenes
-    private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles;
+    //private ListaEnlazada<Transaccion> transaccionesEnOrden; // ListaEnlazada en lugar de array para mantener el orden de inserción/otros órdenes
+    private Transaccion[] transaccionesOrdenId;
+
+    //private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles;
 
     public Bloque(Transaccion[] t) { //O(nb)
         this.transaccionesPorMonto = new Heap<>(t);  //O(n)
-        this.transaccionesEnOrden = new ListaEnlazada<>(); // O(1)
-        
+        //this.transaccionesEnOrden = new ListaEnlazada<>();
+        this.transaccionesOrdenId = new Transaccion[t.length];
+
         // Esto es un fix para el caso de test que el ID de transacción no empieza en 0.
         // Por alguna razón solo tomando el ID máximo de las transacciones no funciona,
         // aunque se supone que los IDs son seguidos, siempre el último debería ser el mayor.

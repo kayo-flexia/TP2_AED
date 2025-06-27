@@ -265,36 +265,5 @@ public class ListaEnlazada<T> {
 
         return res;
     }
-
-    public Iterador<T> iterador() {
-        return new ListaIterador();
-    }
-
-    private class ListaIterador implements Iterador<T> {
-    	private Nodo actual = primero;
-
-        int dedito = 0;
-
-
-        public boolean haySiguiente() {
-	        return dedito != tamano;
-        }
-        
-        public boolean hayAnterior() {
-	        return dedito != 0;
-        }
-
-        public T siguiente() {
-            dedito++;
-            return obtener(dedito - 1);
-        }
-        
-
-        public T anterior() {
-            dedito--;
-            return obtener(dedito);
-        }
-    }
-
 }
 

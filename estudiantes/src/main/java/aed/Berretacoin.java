@@ -3,9 +3,9 @@ package aed;
 import java.util.ArrayList;
 import aed.estructuras.heap.Heap;
 import aed.estructuras.heap.Heap.HandleHeap;
-import aed.estructuras.listaEnlazada.ListaEnlazada;
 
 public class Berretacoin {
+    // No se si realmente hace falta seguir todos los bloques, con el ultimo era suficiente.
     private ArrayList<Bloque> bloques;
     private Usuario maximoTenedor;
     private Heap<Usuario> usuarios;
@@ -13,21 +13,25 @@ public class Berretacoin {
     private int montosTotalesUltimoBloque;
     private int cantidadTransaccionesUltimoBloque;
 
-    public Berretacoin(int n_usuarios) { //O(p)
+    private final int MAX_USUARIOS;
+
+    public Berretacoin(int n_usuarios) { 
+        MAX_USUARIOS = n_usuarios;
+
         this.handlesUsuarios = new ArrayList<>(n_usuarios + 1);
-        for (int i = 0; i <= n_usuarios; i++) { //O(p)
+        for (int i = 0; i <= MAX_USUARIOS; i++) { //O(p)
            this.handlesUsuarios.add(null); // llenar con nulls, fix del error que teniamos
         }
 
         Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1]; //O(1)?
-        HandleHeap<Usuario>[] handles = new HandleHeap[n_usuarios + 1]; //O(1)
+        HandleHeap<Usuario>[] handles = new HandleHeap[MAX_USUARIOS + 1]; //O(1)
 
-        for (int i = 0; i <= n_usuarios; i++) { //O(p)
+        for (int i = 0; i <= MAX_USUARIOS; i++) { //O(p)
             arregloUsuarios[i] = new Usuario(i); //O(1)
             if (i == 0) arregloUsuarios[i].actualizarSaldo(-1); //O(1)
         }
 
-        this.usuarios = new Heap<>(arregloUsuarios, handles); //O(p)
+        this.usuarios = new Heap<>(arregloUsuarios, handles, MAX_USUARIOS); //O(p)
 
         // Guardar los handles en la lista
         for (int i = 0; i <= n_usuarios; i++) {
@@ -122,9 +126,9 @@ public class Berretacoin {
         if (bloques.isEmpty()) return;
 
         Bloque ultimoBloque = bloques.get(bloques.size() - 1);
-        if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
+        if (ultimoBloque.heap().estaVacio()) return;
 
-        Transaccion t = ultimoBloque.heap().desencolar();
+        Transaccion t = ultimoBloque.heap().desencolar(); // O(log nb)
         int idComprador = t.id_comprador();
         int idVendedor = t.id_vendedor();
         int idTx = t.id();
