@@ -3,13 +3,12 @@ package aed;
 import java.util.ArrayList;
 import aed.estructuras.heap.Heap;
 import aed.estructuras.heap.Heap.HandleHeap;
-import aed.estructuras.listaEnlazada.ListaEnlazada;
 
 public class Berretacoin {
     private ArrayList<Bloque> bloques;
     private Heap<Usuario> usuarios;
     private ArrayList<Heap.HandleHeap<Usuario>> handlesUsuarios;
-    private int montosTotalesUltimoBloque;
+    private int montosTotalesUltimoBloque; // mover adentro del bloque
     private int cantidadTransaccionesUltimoBloque;
 
     public Berretacoin(int n_usuarios) { //O(p)
@@ -21,7 +20,7 @@ public class Berretacoin {
         Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1];
         HandleHeap<Usuario>[] handles = new HandleHeap[n_usuarios + 1];
 
-        for (int i = 0; i <= n_usuarios; i++) {
+        for (int i = 0; i <= n_usuarios; i++) { // O (P)
             arregloUsuarios[i] = new Usuario(i);
             if (i == 0) arregloUsuarios[i].actualizarSaldo(-1);
         }
@@ -67,7 +66,7 @@ public class Berretacoin {
         HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador);
         HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor);
 
-        if (handleComprador == null || handleVendedor == null || !handleComprador.estaActivo() || !handleVendedor.estaActivo()) {
+        if (handleComprador == null || handleVendedor == null) {
             System.err.println("Error: Transacción con ID de usuario inválido o inactivo: Comprador " + idComprador + ", Vendedor " + idVendedor);
             return;
         }
@@ -134,8 +133,8 @@ public class Berretacoin {
 
         ultimoBloque.eliminarTransaccionPorId(idTx);
 
-        comprador.actualizarSaldo(montoTransaccion);
-        vendedor.actualizarSaldo(-montoTransaccion);
+        comprador.actualizarSaldo(montoTransaccion); // O(1)
+        vendedor.actualizarSaldo(-montoTransaccion); // O(1)
 
         // Si es de creación, no hace falta hackear nada
         if (idComprador != 0) {

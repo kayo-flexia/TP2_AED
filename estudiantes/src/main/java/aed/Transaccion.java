@@ -1,6 +1,5 @@
 package aed;
 
-import aed.estructuras.listaEnlazada.ListaEnlazada;
 import aed.estructuras.heap.Heap.HandleHeap;
 
 public class Transaccion implements Comparable<Transaccion> {
@@ -8,17 +7,12 @@ public class Transaccion implements Comparable<Transaccion> {
     private int id_comprador;
     private int id_vendedor;
     private int monto;
-    
-    private ListaEnlazada.HandleLE<Transaccion> handleEnLista;
-    private HandleHeap<Transaccion> handleEnHeap;
 
     public Transaccion(int id, int id_comprador, int id_vendedor, int monto) {
         this.id = id;
         this.id_comprador = id_comprador;
         this.id_vendedor = id_vendedor;
         this.monto = monto;
-        this.handleEnLista = null; // inicializamos heap a null
-        this.handleEnHeap = null;
     }
 
     public int id() {
@@ -37,13 +31,7 @@ public class Transaccion implements Comparable<Transaccion> {
         return id_vendedor;
     }
 
-    public ListaEnlazada.HandleLE<Transaccion> getHandleEnLista() {
-        return handleEnLista;
-    }
-
-    public void setHandleEnLista(ListaEnlazada.HandleLE<Transaccion> handle) {
-        this.handleEnLista = handle;
-    }
+    /*
 
     public HandleHeap<Transaccion> getHandleEnHeap() {
         return handleEnHeap;
@@ -52,6 +40,8 @@ public class Transaccion implements Comparable<Transaccion> {
     public void setHandleEnHeap(HandleHeap<Transaccion> handle) {
         this.handleEnHeap = handle;
     }
+
+    */
 
     @Override
     public int compareTo(Transaccion otro) {

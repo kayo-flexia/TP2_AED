@@ -18,11 +18,11 @@ public class Heap<T extends Comparable<T>> {
     // Definimos el handle para el heap
     public static class HandleHeap<T> {
         private Integer refInterna;
-        private boolean activo;
+        // private boolean activo;
 
         public HandleHeap(int refInterna) {
             this.refInterna = refInterna;
-            this.activo = true;
+          //  this.activo = true;
         }
 
         public int getRef() {
@@ -33,14 +33,17 @@ public class Heap<T extends Comparable<T>> {
             this.refInterna = nuevaRef;
         }
 
+        /*
         public boolean estaActivo() {
             return activo;
         }
 
+ 
         protected void invalidar() {
             this.activo = false;
             this.refInterna = null;
         }
+        */
     }
 
     private int indicePadre(int i) {
@@ -114,6 +117,7 @@ public class Heap<T extends Comparable<T>> {
 
         ni.handle.setRef(j);
         nj.handle.setRef(i);
+
     }
 
     private void subir(int i) {
@@ -163,7 +167,7 @@ public class Heap<T extends Comparable<T>> {
     }
 
     public T obtenerValor(HandleHeap<T> handle) {
-        if (handle == null || !handle.estaActivo()) {
+        if (handle == null) {
             throw new IllegalArgumentException("El handle proporcionado es nulo o inactivo.");
         }
         return heap.get(handle.getRef()).valor;
