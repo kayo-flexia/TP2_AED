@@ -421,6 +421,10 @@ public class BerretacoinTests {
                             tx_total--;
                         }
                         monto_medio = tx_total == 0 ? 0 : monto_total / tx_total;
+                        if (sistema.maximoTenedor() == 2055 && tracker.getMaximoTenedor() == 2046) {
+                            System.out.println("reached");
+                        }
+
                         assertEquals(monto_medio, sistema.montoMedioUltimoBloque());
                         assertTrue(Arrays.equals(transacciones.toArray(new Transaccion[0]), sistema.txUltimoBloque()));
                         assertEquals(tracker.getMaximoTenedor(), sistema.maximoTenedor());
