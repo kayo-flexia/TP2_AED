@@ -72,9 +72,4 @@ public class Transaccion implements Comparable<Transaccion> {
         Transaccion that = (Transaccion) otro;
         return this.id == that.id;
     }
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(id);
-    }
 }

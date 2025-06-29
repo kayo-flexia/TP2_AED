@@ -37,11 +37,6 @@ public class Usuario implements Comparable<Usuario> {
     }
 
     @Override
-    public int hashCode() {
-        return Integer.hashCode(id);
-    }
-
-    @Override
     public int compareTo(Usuario otro) {
         if (this.saldo != otro.saldo) {
             return Integer.compare(this.saldo, otro.saldo); // mayor saldo primero

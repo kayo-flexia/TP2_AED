@@ -3,17 +3,12 @@ package aed;
 import aed.estructuras.heap.Heap;
 import aed.estructuras.listaEnlazada.Iterador;
 import aed.estructuras.listaEnlazada.ListaEnlazada;
-
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class Bloque {
     private Heap<Transaccion> transaccionesPorMonto; // Heap de transacciones por monto
     private ListaEnlazada<Transaccion> transaccionesEnOrden; // ListaEnlazada en lugar de array para mantener el orden de inserción/otros órdenes
     private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles;
-
-    private int cantidadDeTransacciones;
 
     public Bloque(Transaccion[] t) { //O(nb)
         this.transaccionesPorMonto = new Heap<>(t);  //O(n)
@@ -44,7 +39,6 @@ public class Bloque {
             ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx);
             tx.setHandleEnLista(listaHandle);
             this.transaccionHandles.set(tx.id(), listaHandle);
-            cantidadDeTransacciones ++;
         }
     }
 
@@ -68,19 +62,8 @@ public class Bloque {
         return res;
     }
 
-    public void eliminarTransaccionPorId(int id) {
+    public void eliminarTransaccionPorId(int id) { // O(1)
         ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id); // O (1)
-
-        transaccionesEnOrden.eliminar(handle);   
-    }
-        
-
-
-    public Transaccion obtenerTransaccionPorId(int id) { // O (1)
-        ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id);
-        if (handle != null && handle.estaActivo()) {
-            return handle.getValor();
-        }
-        return null;
+        transaccionesEnOrden.eliminar(handle); // O(1) por que se elimina con handle.
     }
 }

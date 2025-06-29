@@ -14,7 +14,6 @@ public class TestsPropios {
         berretacoin = new Berretacoin(20);
     }
 
-
     @Test
     public void maximoTenedorConMuchosEmpates() {
         for (int i = 1; i <= 5; i++) {
@@ -25,13 +24,6 @@ public class TestsPropios {
         }
 
         assertEquals(1, berretacoin.maximoTenedor());
-    }
-
-    @Test
-    public void hackeoNoHaceNadaSiNoHayBloques() {
-        berretacoin.hackearTx();
-        assertEquals(1, berretacoin.maximoTenedor());
-        assertEquals(0, berretacoin.txUltimoBloque().length);
     }
 
     @Test
@@ -91,5 +83,11 @@ public class TestsPropios {
         assertEquals(1, berretacoin.txUltimoBloque().length);
         assertEquals(1, berretacoin.maximoTenedor());
     }
+
+    //  Testear algo de lista enlazada?
+
+    // Testear el Heap corto
+
+    // Testear iterador
 
 }

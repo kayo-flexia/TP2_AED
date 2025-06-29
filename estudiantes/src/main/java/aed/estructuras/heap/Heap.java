@@ -18,28 +18,9 @@ public class Heap<T extends Comparable<T>> {
     // Definimos el handle para el heap
     public static class HandleHeap<T> {
         private Integer refInterna;
-        private boolean activo;
 
         public HandleHeap(int refInterna) {
             this.refInterna = refInterna;
-            this.activo = true;
-        }
-
-        public int getRef() {
-            return refInterna;
-        }
-
-        protected void setRef(int nuevaRef) {
-            this.refInterna = nuevaRef;
-        }
-
-        public boolean estaActivo() {
-            return activo;
-        }
-
-        protected void invalidar() {
-            this.activo = false;
-            this.refInterna = null;
         }
     }
 
@@ -112,8 +93,8 @@ public class Heap<T extends Comparable<T>> {
         heap.set(i, nj);
         heap.set(j, ni);
 
-        ni.handle.setRef(j);
-        nj.handle.setRef(i);
+        ni.handle.refInterna = j;
+        nj.handle.refInterna = i;
     }
 
     private void subir(int i) {
@@ -162,15 +143,15 @@ public class Heap<T extends Comparable<T>> {
         return heap.get(i).valor;
     }
 
-    public T obtenerValor(HandleHeap<T> handle) {
-        if (handle == null || !handle.estaActivo()) {
-            throw new IllegalArgumentException("El handle proporcionado es nulo o inactivo.");
+    public T obtenerValor(HandleHeap<T> handle) { // O(1)
+        if (handle == null) {
+            throw new NullPointerException();
         }
-        return heap.get(handle.getRef()).valor; //O(1) porque es un arrayList y accedemos a una posicion.
+        return heap.get(handle.refInterna).valor; //O(1) porque es un arrayList y accedemos a una posicion.
     }
 
     public void actualizar(HandleHeap<T> handle) { //O(log p)
-        int i = handle.getRef(); //O(1)
+        int i = handle.refInterna; //O(1)
         bajar(i); //O(log p)
         subir(i); //O(log p)
     }

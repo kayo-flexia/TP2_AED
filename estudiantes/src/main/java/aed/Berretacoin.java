@@ -3,11 +3,9 @@ package aed;
 import java.util.ArrayList;
 import aed.estructuras.heap.Heap;
 import aed.estructuras.heap.Heap.HandleHeap;
-import aed.estructuras.listaEnlazada.ListaEnlazada;
 
 public class Berretacoin {
     private Bloque ultimoBloque;
-    private Usuario maximoTenedor;
     private Heap<Usuario> usuarios;
     private ArrayList<Heap.HandleHeap<Usuario>> handlesUsuarios;
     private int montosTotalesUltimoBloque;
@@ -33,9 +31,6 @@ public class Berretacoin {
         for (int i = 0; i <= n_usuarios; i++) {
             handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]); //O(1), llenamos todas las posiciones.
         }
-
-        this.maximoTenedor = usuarios.maximo(); //O(1)
-        this.ultimoBloque = null;
     }
 
     public void agregarBloque(Transaccion[] transacciones){
@@ -53,7 +48,6 @@ public class Berretacoin {
             } //O(1)
         } //O(1)
 
-        this.maximoTenedor = usuarios.maximo(); //O(1)
         this.montosTotalesUltimoBloque = sumaMontos; //O(1)
         this.cantidadTransaccionesUltimoBloque = cantidadValidas; // O(1)
         //O(nb + nb*log p) = O(nb*log p)
@@ -69,7 +63,7 @@ public class Berretacoin {
         HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador); //O(1)
         HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor); //O(1)
 
-        if (handleComprador == null || handleVendedor == null || !handleComprador.estaActivo() || !handleVendedor.estaActivo()) { //O(1)
+        if (handleComprador == null || handleVendedor == null) { //O(1)
             System.err.println("Error: Transacción con ID de usuario inválido o inactivo: Comprador " + idComprador + ", Vendedor " + idVendedor); //O(1)
             return;
         }
@@ -86,11 +80,6 @@ public class Berretacoin {
 
 
     public Transaccion txMayorValorUltimoBloque(){ //O(1)
-        //Devuelve la transacción de mayor valor del último bloque (sin extraerla).
-        if (ultimoBloque == null) {
-            return null; 
-        }
-        
         Transaccion mayorTransaccion = ultimoBloque.heap().maximo(); // O(1) porque es un heap
         return mayorTransaccion;
     }
@@ -102,50 +91,44 @@ public class Berretacoin {
 
 
     public int maximoTenedor(){
-        return this.maximoTenedor.id(); //O(1) ya que tengo usuarios de 0 a n, pero el usuario 0 no existe
+        return usuarios.maximo().id(); //O(1) ya que tengo usuarios de 0 a n, pero el usuario 0 no existe
     }
 
     public int montoMedioUltimoBloque() {
-        if (ultimoBloque == null || cantidadTransaccionesUltimoBloque == 0) {
+        if (cantidadTransaccionesUltimoBloque == 0) {
             return 0;
         }
         return montosTotalesUltimoBloque / cantidadTransaccionesUltimoBloque;
     }
 
 
-    public void hackearTx() {
-        if (ultimoBloque == null) return;
+    public void hackearTx() { // O(log nb + log P)
+        Transaccion t = ultimoBloque.heap().desencolar(); // O(log nb)
+        int idComprador = t.id_comprador(); // O(1)
+        int idVendedor = t.id_vendedor(); // O(1)
+        int idTx = t.id(); // O(1)
+        int montoTransaccion = t.monto(); // O(1)
 
-        if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
-
-        Transaccion t = ultimoBloque.heap().desencolar();
-        int idComprador = t.id_comprador();
-        int idVendedor = t.id_vendedor();
-        int idTx = t.id();
-        int montoTransaccion = t.monto();
-
-        HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador);
-        HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor);
+        HandleHeap<Usuario> handleComprador = handlesUsuarios.get(idComprador); // O(1)
+        HandleHeap<Usuario> handleVendedor = handlesUsuarios.get(idVendedor); // O(1)
         Usuario comprador = usuarios.obtenerValor(handleComprador); // O(1) con el método obtenerValor
         Usuario vendedor = usuarios.obtenerValor(handleVendedor); // O(1) con el método obtenerValor
 
-        ultimoBloque.eliminarTransaccionPorId(idTx);
+        ultimoBloque.eliminarTransaccionPorId(idTx); // O(1)
 
-        comprador.actualizarSaldo(montoTransaccion);
-        usuarios.actualizar(handleComprador); // Actualizamos el handle antes de cambiar el saldo del vendedor
+        comprador.actualizarSaldo(montoTransaccion); // O(1)
+        // Actualizamos el arbol antes de actualizar el saldo vendedor para no romper el invariante del arbol.
+        usuarios.actualizar(handleComprador); // O(log P)
 
-        vendedor.actualizarSaldo(-montoTransaccion);
+        vendedor.actualizarSaldo(-montoTransaccion); // O(1)
+        // Actualizamos el arbol antes de actualizar el saldo vendedor para no romper el invariante del arbol.
+        usuarios.actualizar(handleVendedor);
 
-        // Si es de creación, no hace falta hackear nada
+        // Si el id es distinto de 0, descontar su aporte en el promedio.
         if (idComprador != 0) {
             this.montosTotalesUltimoBloque -= montoTransaccion;
             this.cantidadTransaccionesUltimoBloque -= 1;
-        } 
-
-        // Actualizar los handles de los usuarios
-        usuarios.actualizar(handleVendedor);
-
-        this.maximoTenedor = usuarios.maximo();
+        }
     }
 
 }
