@@ -96,10 +96,6 @@ public class Berretacoin {
     }
 
     public Transaccion[] txUltimoBloque() { //O(nb)
-        if (ultimoBloque == null) {
-            return new Transaccion[0];
-        }
-
         return ultimoBloque.getTransaccionesArray(); //O(nb)
     }
 

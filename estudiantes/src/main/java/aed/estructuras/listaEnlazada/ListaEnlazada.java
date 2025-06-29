@@ -271,28 +271,39 @@ public class ListaEnlazada<T> {
     }
 
     private class ListaIterador implements Iterador<T> {
-    	private Nodo actual = primero;
-
-        int dedito = 0;
-
+        private Nodo anterior;
+        private Nodo siguiente;
+        
+        public ListaIterador() {
+            this.anterior = null;
+            this.siguiente = ListaEnlazada.this.primero;
+        }
 
         public boolean haySiguiente() {
-	        return dedito != tamano;
+	        return siguiente != null;
         }
         
         public boolean hayAnterior() {
-	        return dedito != 0;
+	        return anterior != null;
         }
 
         public T siguiente() {
-            dedito++;
-            return obtener(dedito - 1);
+            T valor = siguiente.valor;
+
+            this.anterior = this.siguiente;
+            this.siguiente = this.siguiente.siguiente;
+
+            return valor;
         }
         
 
         public T anterior() {
-            dedito--;
-            return obtener(dedito);
+            T valor = anterior.valor;
+            
+            this.siguiente = this.anterior;
+            this.anterior = this.anterior.anterior;
+
+            return valor;
         }
     }
 

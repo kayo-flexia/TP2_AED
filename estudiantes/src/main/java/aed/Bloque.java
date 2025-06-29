@@ -1,14 +1,19 @@
 package aed;
 
 import aed.estructuras.heap.Heap;
+import aed.estructuras.listaEnlazada.Iterador;
 import aed.estructuras.listaEnlazada.ListaEnlazada;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Bloque {
     private Heap<Transaccion> transaccionesPorMonto; // Heap de transacciones por monto
     private ListaEnlazada<Transaccion> transaccionesEnOrden; // ListaEnlazada en lugar de array para mantener el orden de inserción/otros órdenes
     private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles;
+
+    private int cantidadDeTransacciones;
 
     public Bloque(Transaccion[] t) { //O(nb)
         this.transaccionesPorMonto = new Heap<>(t);  //O(n)
@@ -39,6 +44,7 @@ public class Bloque {
             ListaEnlazada.HandleLE<Transaccion> listaHandle = transaccionesEnOrden.agregarAtrasConHandle(tx);
             tx.setHandleEnLista(listaHandle);
             this.transaccionHandles.set(tx.id(), listaHandle);
+            cantidadDeTransacciones ++;
         }
     }
 
@@ -48,30 +54,29 @@ public class Bloque {
     }
 
     public Transaccion[] getTransaccionesArray() { // O(nb)
-        Transaccion[] array = (Transaccion[]) new Transaccion[transaccionesEnOrden.longitud()];
-        for (int i = 0; i < transaccionesEnOrden.longitud(); i++) {
-            array[i] = transaccionesEnOrden.obtener(i);
+        Iterador<Transaccion> iterador = transaccionesEnOrden.iterador(); // O(1)
+        
+        Transaccion[] res = new Transaccion[transaccionesEnOrden.longitud()]; // O(1)
+        int index = 0; // O(1)
+
+        while (iterador.haySiguiente()) { // O (nb)
+            Transaccion actual = iterador.siguiente(); // O(1)
+            res[index] = actual; // O(1)
+            index++; // O(1)
         }
-        return array;
+
+        return res;
     }
 
     public void eliminarTransaccionPorId(int id) {
-        aed.estructuras.listaEnlazada.Iterador<Transaccion> it = transaccionesEnOrden.iterador();
-        int indice = 0;
-        
-        //Eso es O(N) y no O(N*N)
-        while (it.haySiguiente()) {
-            Transaccion tx = it.siguiente();
-            if (tx.id() == id) {
-                transaccionesEnOrden.eliminar(indice); // Eliminar por índice
-                return;
-            }
-            indice++;
-        }
+        ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id); // O (1)
+
+        transaccionesEnOrden.eliminar(handle);   
     }
+        
 
 
-    public Transaccion obtenerTransaccionPorId(int id) {
+    public Transaccion obtenerTransaccionPorId(int id) { // O (1)
         ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id);
         if (handle != null && handle.estaActivo()) {
             return handle.getValor();
