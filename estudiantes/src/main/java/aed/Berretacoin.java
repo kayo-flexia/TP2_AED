@@ -6,7 +6,7 @@ import aed.estructuras.heap.Heap.HandleHeap;
 import aed.estructuras.listaEnlazada.ListaEnlazada;
 
 public class Berretacoin {
-    private ArrayList<Bloque> bloques;
+    private Bloque ultimoBloque;
     private Usuario maximoTenedor;
     private Heap<Usuario> usuarios;
     private ArrayList<Heap.HandleHeap<Usuario>> handlesUsuarios;
@@ -35,13 +35,12 @@ public class Berretacoin {
         }
 
         this.maximoTenedor = usuarios.maximo(); //O(1)
-        this.bloques = new ArrayList<>(); //O(1)
+        this.ultimoBloque = null;
     }
 
     public void agregarBloque(Transaccion[] transacciones){
-        Bloque b = new Bloque(transacciones); //O(nb)
-        this.bloques.add(b); //O(1) MAL, es O(la cantidad de bloques). Estamos concatenando un elemento a un array (porque no hay posiciones disponibles, ya que nunca definimos el tamaño del array bloques), y eso cuesta O(la cantidad de bloques + 1). estamos agregando una nueva variable de complejidad: la cantidad de bloques. Se solucionaría si usamos vector
-
+        Bloque nuevoBloque = new Bloque(transacciones); //O(nb)
+        ultimoBloque = nuevoBloque;
         int sumaMontos = 0;
         int cantidadValidas = 0;
 
@@ -52,7 +51,7 @@ public class Berretacoin {
                 sumaMontos += transaccion.monto();
                 cantidadValidas++;
             } //O(1)
-        }
+        } //O(1)
 
         this.maximoTenedor = usuarios.maximo(); //O(1)
         this.montosTotalesUltimoBloque = sumaMontos; //O(1)
@@ -88,19 +87,19 @@ public class Berretacoin {
 
     public Transaccion txMayorValorUltimoBloque(){ //O(1)
         //Devuelve la transacción de mayor valor del último bloque (sin extraerla).
-        if (bloques.isEmpty()) {
+        if (ultimoBloque == null) {
             return null; 
         }
-        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
+        
         Transaccion mayorTransaccion = ultimoBloque.heap().maximo(); // O(1) porque es un heap
         return mayorTransaccion;
     }
 
     public Transaccion[] txUltimoBloque() { //O(nb)
-        if (bloques.isEmpty()) {
+        if (ultimoBloque == null) {
             return new Transaccion[0];
         }
-        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
+
         return ultimoBloque.getTransaccionesArray(); //O(nb)
     }
 
@@ -111,7 +110,7 @@ public class Berretacoin {
     }
 
     public int montoMedioUltimoBloque() {
-        if (bloques.isEmpty() || cantidadTransaccionesUltimoBloque == 0) {
+        if (ultimoBloque == null || cantidadTransaccionesUltimoBloque == 0) {
             return 0;
         }
         return montosTotalesUltimoBloque / cantidadTransaccionesUltimoBloque;
@@ -119,9 +118,8 @@ public class Berretacoin {
 
 
     public void hackearTx() {
-        if (bloques.isEmpty()) return;
+        if (ultimoBloque == null) return;
 
-        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
 
         Transaccion t = ultimoBloque.heap().desencolar();
@@ -138,6 +136,8 @@ public class Berretacoin {
         ultimoBloque.eliminarTransaccionPorId(idTx);
 
         comprador.actualizarSaldo(montoTransaccion);
+        usuarios.actualizar(handleComprador); // Actualizamos el handle antes de cambiar el saldo del vendedor
+
         vendedor.actualizarSaldo(-montoTransaccion);
 
         // Si es de creación, no hace falta hackear nada
@@ -147,7 +147,6 @@ public class Berretacoin {
         } 
 
         // Actualizar los handles de los usuarios
-        usuarios.actualizar(handleComprador);
         usuarios.actualizar(handleVendedor);
 
         this.maximoTenedor = usuarios.maximo();

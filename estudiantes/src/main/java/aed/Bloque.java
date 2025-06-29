@@ -55,15 +55,21 @@ public class Bloque {
         return array;
     }
 
-    public void eliminarTransaccionPorId(int id) { // O(1)
-        ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id); //O(1)
-
-
-        if (handle != null && handle.estaActivo()) { 
-            transaccionesEnOrden.eliminar(handle); // Eliminar de la ListaEnlazada usando el handle (O(1))
-            handle.invalidar(); // Marcar el handle como inactivo
+    public void eliminarTransaccionPorId(int id) {
+        aed.estructuras.listaEnlazada.Iterador<Transaccion> it = transaccionesEnOrden.iterador();
+        int indice = 0;
+        
+        //Eso es O(N) y no O(N*N)
+        while (it.haySiguiente()) {
+            Transaccion tx = it.siguiente();
+            if (tx.id() == id) {
+                transaccionesEnOrden.eliminar(indice); // Eliminar por índice
+                return;
+            }
+            indice++;
         }
     }
+
 
     public Transaccion obtenerTransaccionPorId(int id) {
         ListaEnlazada.HandleLE<Transaccion> handle = transaccionHandles.get(id);
