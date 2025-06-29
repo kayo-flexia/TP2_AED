@@ -176,6 +176,7 @@ public class Heap<T extends Comparable<T>> {
     public void actualizar(HandleHeap<T> handle) {
         int i = handle.getRef();
         bajar(i);
+         i = handle.getRef();
         subir(i);
     }
 }

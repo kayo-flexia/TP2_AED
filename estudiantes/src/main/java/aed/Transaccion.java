@@ -1,7 +1,5 @@
 package aed;
 
-import aed.estructuras.heap.Heap.HandleHeap;
-
 public class Transaccion implements Comparable<Transaccion> {
     private int id;
     private int id_comprador;

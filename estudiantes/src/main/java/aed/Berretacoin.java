@@ -5,7 +5,7 @@ import aed.estructuras.heap.Heap;
 import aed.estructuras.heap.Heap.HandleHeap;
 
 public class Berretacoin {
-    private ArrayList<Bloque> bloques;
+    private Bloque ultimoBloque;
     private Heap<Usuario> usuarios;
     private ArrayList<Heap.HandleHeap<Usuario>> handlesUsuarios;
     private int montosTotalesUltimoBloque; // mover adentro del bloque
@@ -32,12 +32,11 @@ public class Berretacoin {
             handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]);
         }
 
-        this.bloques = new ArrayList<>();
     }
 
     public void agregarBloque(Transaccion[] transacciones){
-        Bloque b = new Bloque(transacciones); //O(nb)
-        this.bloques.add(b); //O(1)
+        Bloque nuevoBloque = new Bloque(transacciones); //O(nb)
+        ultimoBloque = nuevoBloque;
 
         int sumaMontos = 0;
         int cantidadValidas = 0;
@@ -84,19 +83,17 @@ public class Berretacoin {
 
     public Transaccion txMayorValorUltimoBloque(){ //O(1)
         //Devuelve la transacción de mayor valor del último bloque (sin extraerla).
-        if (bloques.isEmpty()) {
+        /* 
+        if (Bloque.heap().s == null) {
             return null; 
         }
-        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
+        */
+        
         Transaccion mayorTransaccion = ultimoBloque.heap().maximo(); // O(1) porque es un heap
         return mayorTransaccion;
     }
 
     public Transaccion[] txUltimoBloque() { //O(nb)
-        if (bloques.isEmpty()) {
-            return new Transaccion[0];
-        }
-        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         return ultimoBloque.getTransaccionesArray(); //O(nb)
     }
 
@@ -107,7 +104,7 @@ public class Berretacoin {
     }
 
     public int montoMedioUltimoBloque() {
-        if (bloques.isEmpty() || cantidadTransaccionesUltimoBloque == 0) {
+        if (cantidadTransaccionesUltimoBloque == 0) {
             return 0;
         }
         return montosTotalesUltimoBloque / cantidadTransaccionesUltimoBloque;
@@ -115,9 +112,6 @@ public class Berretacoin {
 
 
     public void hackearTx() {
-        if (bloques.isEmpty()) return;
-
-        Bloque ultimoBloque = bloques.get(bloques.size() - 1);
         if (ultimoBloque.heap().estaVacio()) return; // bloque vacío, nada que hackear
 
         Transaccion t = ultimoBloque.heap().desencolar();
@@ -134,6 +128,7 @@ public class Berretacoin {
         ultimoBloque.eliminarTransaccionPorId(idTx);
 
         comprador.actualizarSaldo(montoTransaccion); // O(1)
+        usuarios.actualizar(handleComprador);
         vendedor.actualizarSaldo(-montoTransaccion); // O(1)
 
         // Si es de creación, no hace falta hackear nada
@@ -143,7 +138,6 @@ public class Berretacoin {
         } 
 
         // Actualizar los handles de los usuarios
-        usuarios.actualizar(handleComprador);
         usuarios.actualizar(handleVendedor);
     }
 
