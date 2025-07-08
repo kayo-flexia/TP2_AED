@@ -11,7 +11,7 @@ public class Bloque {
     private ArrayList<ListaEnlazada.HandleLE<Transaccion>> transaccionHandles;
 
     public Bloque(Transaccion[] t) { //O(nb)
-        this.transaccionesPorMonto = new Heap<>(t);  //O(n)
+        this.transaccionesPorMonto = new Heap<>(t);  //O(nb)
         this.transaccionesEnOrden = new ListaEnlazada<>(); // O(1)
         
         // Esto es un fix para el caso de test que el ID de transacción no empieza en 0.
@@ -19,8 +19,8 @@ public class Bloque {
         // aunque se supone que los IDs son seguidos, siempre el último debería ser el mayor.
 
         //Calcular máximo ID de transacción
-        int maxIdTx = 0;
-        for (Transaccion tx : t) {
+        int maxIdTx = 0; //O(1)
+        for (Transaccion tx : t) { //O(nb)
             if (tx.id() > maxIdTx) {
                 maxIdTx = tx.id();
             }
@@ -43,7 +43,7 @@ public class Bloque {
     }
 
 
-    public Heap<Transaccion> heap() {
+    public Heap<Transaccion> heap() {  //O(1)
         return transaccionesPorMonto;
     }
 

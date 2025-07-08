@@ -12,7 +12,7 @@ public class Transaccion implements Comparable<Transaccion> {
     private ListaEnlazada.HandleLE<Transaccion> handleEnLista;
     private HandleHeap<Transaccion> handleEnHeap;
 
-    public Transaccion(int id, int id_comprador, int id_vendedor, int monto) {
+    public Transaccion(int id, int id_comprador, int id_vendedor, int monto) { //O(1)
         this.id = id;
         this.id_comprador = id_comprador;
         this.id_vendedor = id_vendedor;
@@ -21,40 +21,40 @@ public class Transaccion implements Comparable<Transaccion> {
         this.handleEnHeap = null;
     }
 
-    public int id() {
+    public int id() { //O(1)
         return id;
     }
 
-    public int monto() {
+    public int monto() { //O(1)
         return monto;
     }
 
-    public int id_comprador() {
+    public int id_comprador() { //O(1)
         return id_comprador;
     }
 
-    public int id_vendedor() {
+    public int id_vendedor() { //O(1)
         return id_vendedor;
     }
 
-    public ListaEnlazada.HandleLE<Transaccion> getHandleEnLista() {
+    public ListaEnlazada.HandleLE<Transaccion> getHandleEnLista() { //O(1)
         return handleEnLista;
     }
 
-    public void setHandleEnLista(ListaEnlazada.HandleLE<Transaccion> handle) {
+    public void setHandleEnLista(ListaEnlazada.HandleLE<Transaccion> handle) { //O(1)
         this.handleEnLista = handle;
     }
 
-    public HandleHeap<Transaccion> getHandleEnHeap() {
+    public HandleHeap<Transaccion> getHandleEnHeap() { //O(1)
         return handleEnHeap;
     }
 
-    public void setHandleEnHeap(HandleHeap<Transaccion> handle) {
+    public void setHandleEnHeap(HandleHeap<Transaccion> handle) { //O(1)
         this.handleEnHeap = handle;
     }
 
     @Override
-    public int compareTo(Transaccion otro) {
+    public int compareTo(Transaccion otro) { //O(1)
         if (this.monto != otro.monto) {
             return Integer.compare(this.monto, otro.monto);
         } else {
@@ -65,7 +65,7 @@ public class Transaccion implements Comparable<Transaccion> {
 
 
     @Override
-    public boolean equals(Object otro){
+    public boolean equals(Object otro){ //O(1)
         if (this == otro) return true; // Si es la misma referencia, es el mismo
         if (otro == null || getClass() != otro.getClass()) return false;
         

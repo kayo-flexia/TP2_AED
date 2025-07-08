@@ -41,7 +41,7 @@ public class ListaEnlazada<T> {
         return this.tamano;
     }
 
-    public void agregarAdelante(T elem) {
+    public void agregarAdelante(T elem) { //O(1) son todas asignaciones
         Nodo nuevo = new Nodo(elem);
         if (this.primero == null) {
             this.primero = nuevo;
@@ -134,36 +134,36 @@ public class ListaEnlazada<T> {
     }
 
     public void eliminar(HandleLE<T> handle) { //O(1)
-        if (handle == null) {
+        if (handle == null) { //O(1)
             return; // Handle inválido
         }
 
-        Nodo nodoAEliminar = handle.nodoInterno;
+        Nodo nodoAEliminar = handle.nodoInterno; //O(1)
 
         // Si el nodo es el primero
         if (nodoAEliminar.anterior == null) {
             this.primero = nodoAEliminar.siguiente;
         } else {
             nodoAEliminar.anterior.siguiente = nodoAEliminar.siguiente;
-        }
+        } //O(1)
 
         // Si el nodo es el ultimo
         if (nodoAEliminar.siguiente == null) {
             this.ultimo = nodoAEliminar.anterior;
         } else {
             nodoAEliminar.siguiente.anterior = nodoAEliminar.anterior;
-        }
+        } //O(1)
 
         // Si la lista queda vacía
         if (this.tamano == 1) { // Caso especial: era el único elemento
             this.primero = null;
             this.ultimo = null;
-        }
+        } //O(1)
 
         this.tamano--;
     }
 
-    public Iterador<T> iterador() {
+    public Iterador<T> iterador() { //O(1)
         return new ListaIterador();
     }
 
@@ -171,20 +171,20 @@ public class ListaEnlazada<T> {
         private Nodo anterior;
         private Nodo siguiente;
         
-        public ListaIterador() {
+        public ListaIterador() { //O(1)
             this.anterior = null;
             this.siguiente = ListaEnlazada.this.primero;
         }
 
-        public boolean haySiguiente() {
+        public boolean haySiguiente() { //O(1)
 	        return siguiente != null;
         }
         
-        public boolean hayAnterior() {
+        public boolean hayAnterior() { //O(1)
 	        return anterior != null;
         }
 
-        public T siguiente() {
+        public T siguiente() { //O(1)
             T valor = siguiente.valor;
 
             this.anterior = this.siguiente;
@@ -194,7 +194,7 @@ public class ListaEnlazada<T> {
         }
         
 
-        public T anterior() {
+        public T anterior() { //O(1)
             T valor = anterior.valor;
             
             this.siguiente = this.anterior;

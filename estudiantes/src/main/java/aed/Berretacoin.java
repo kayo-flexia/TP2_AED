@@ -17,7 +17,7 @@ public class Berretacoin {
            this.handlesUsuarios.add(null); // llenar con nulls, fix del error que teniamos
         }
 
-        Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1]; //O(1)?
+        Usuario[] arregloUsuarios = new Usuario[n_usuarios + 1]; //O(1)
         HandleHeap<Usuario>[] handles = new HandleHeap[n_usuarios + 1]; //O(1)
 
         for (int i = 0; i <= n_usuarios; i++) { //O(p)
@@ -28,12 +28,12 @@ public class Berretacoin {
         this.usuarios = new Heap<>(arregloUsuarios, handles); //O(p)
 
         // Guardar los handles en la lista
-        for (int i = 0; i <= n_usuarios; i++) {
+        for (int i = 0; i <= n_usuarios; i++) { //O(p)
             handlesUsuarios.set(arregloUsuarios[i].id(), handles[i]); //O(1), llenamos todas las posiciones.
         }
     }
 
-    public void agregarBloque(Transaccion[] transacciones){
+    public void agregarBloque(Transaccion[] transacciones){ //O(nb * log p)
         Bloque nuevoBloque = new Bloque(transacciones); //O(nb)
         ultimoBloque = nuevoBloque;
         int sumaMontos = 0;
@@ -88,8 +88,6 @@ public class Berretacoin {
         return ultimoBloque.getTransaccionesArray(); //O(nb)
     }
 
-
-
     public int maximoTenedor(){
         return usuarios.maximo().id(); //O(1) ya que tengo usuarios de 0 a n, pero el usuario 0 no existe
     }
@@ -122,10 +120,10 @@ public class Berretacoin {
 
         vendedor.actualizarSaldo(-montoTransaccion); // O(1)
         // Actualizamos el arbol antes de actualizar el saldo vendedor para no romper el invariante del arbol.
-        usuarios.actualizar(handleVendedor);
+        usuarios.actualizar(handleVendedor); // O(log P)
 
         // Si el id es distinto de 0, descontar su aporte en el promedio.
-        if (idComprador != 0) {
+        if (idComprador != 0) { //O(1)
             this.montosTotalesUltimoBloque -= montoTransaccion;
             this.cantidadTransaccionesUltimoBloque -= 1;
         }
